@@ -1,0 +1,30 @@
+version: '3.8'
+services:
+  db:
+    image: postgres:15
+    volumes:
+      - pg-data:/var/lib/postegresql/data
+    environment:
+      POSTGRES_USER: votacao
+      POSTGRES_PASSWORD: _Votacao
+      POSTGRES_DB: db_votacao
+    ports:
+      - "5441:5432"
+#  app:
+#    image: votacao:latest
+#    build:
+#      context: .
+#      dockerfile: Dockerfile
+#    depends_on:
+#      - db
+#    ports:
+#      - "8083:8083"
+#    environment:
+#      SPRING_DATASOURCE_URL: r2dbc:postgresql://localhost:5441/db_votacao
+#      SPRING_DATASOURCE_FLYAWAY_URL: jdbc:postgresql://localhost:5441/db_votacao
+#      SPRING_DATASOURCE_USERNAME: votacao
+#      SPRING_DATASOURCE_PASSWORD: _Votacao
+#      SPRING_PROFILES_ACTIVE: dev
+#      APP-ENDPOINT-BASE: http://localhost:8083
+volumes:
+  pg-data:
