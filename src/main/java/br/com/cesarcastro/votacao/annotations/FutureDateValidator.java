@@ -2,16 +2,21 @@ package br.com.cesarcastro.votacao.annotations;
 
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
-import java.time.LocalDate;
+import lombok.extern.slf4j.Slf4j;
 
-public class FutureDateValidator implements ConstraintValidator<FutureDate, LocalDate> {
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+
+@Slf4j
+public class FutureDateValidator implements ConstraintValidator<FutureDate, LocalDateTime> {
 
     @Override
     public void initialize(FutureDate constraintAnnotation) {
     }
 
     @Override
-    public boolean isValid(LocalDate date, ConstraintValidatorContext context) {
-        return date.isAfter(LocalDate.now());
+    public boolean isValid(LocalDateTime date, ConstraintValidatorContext context) {
+        log.info("Validating date: {}", date);
+        return date.isAfter(LocalDateTime.now());
     }
 }
