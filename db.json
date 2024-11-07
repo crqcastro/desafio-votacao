@@ -1,0 +1,29 @@
+{
+  "user": [
+    {
+      "id": 1,
+      "cpf": "14928546032",
+        "name": "Carolina Lara Santos"
+    },
+    {
+      "id": 2,
+      "cpf": "93868910000",
+      "name": "Cristiane Mariah Galvão"
+    },
+    {
+      "id": 3,
+      "cpf": "45595472030",
+      "name": "Daniela Catarina da Costa"
+    },
+    {
+      "id": 4,
+      "cpf": "99296756049",
+      "name": "Eduarda Maitê da Luz"
+    },
+    {
+      "id": 5,
+      "cpf": "57175590032",
+        "name": "Elaine Nina Moura"
+    }
+  ]
+}
