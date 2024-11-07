@@ -10,7 +10,7 @@
     </parent>
     <groupId>br.com.cesarcastro</groupId>
     <artifactId>votacao</artifactId>
-    <version>1.0.4</version>
+    <version>1.0.5</version>
     <name>votacao</name>
     <description>Desafio de votação do SICRED</description>
     <developers>
@@ -32,6 +32,7 @@
         <reactor-test.version>3.5.9</reactor-test.version>
         <mapstruct.version>1.6.0.Beta1</mapstruct.version>
         <easy-random-core.version>4.0.0</easy-random-core.version>
+        <spring-cloud-starter-openfeign.version>3.1.5</spring-cloud-starter-openfeign.version>
     </properties>
     <dependencies>
         <!-- SPRING - START -->
@@ -40,6 +41,13 @@
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
         <!-- SPRING - END -->
+        <!-- OPENFEIGN - START -->
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-openfeign</artifactId>
+            <version>${spring-cloud-starter-openfeign.version}</version>
+        </dependency>
+        <!-- OPENFEIGN - END -->
         <!-- ACTUATOR - START -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
