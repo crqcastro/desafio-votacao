@@ -1,6 +1,7 @@
 package br.com.cesarcastro.votacao.domain.client;
 
 import br.com.cesarcastro.votacao.domain.model.clients.in.Usuario;
+import br.com.cesarcastro.votacao.support.exceptions.RecursoNaoEncontradoException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -32,9 +33,13 @@ public class UsuarioClient {
 
     public Usuario buscarUsuarioPorCpf(String cpf) {
         try {
-            return om.readValue(
+            List<Usuario> list = om.readValue(
                     client.get(urlBase.concat("/user").concat("?cpf=").concat(cpf), obterHeaders()),
-                    new TypeReference<List<Usuario>>() {}).get(0);
+                    new TypeReference<List<Usuario>>() {});
+            if(list.isEmpty()) {
+                throw new RecursoNaoEncontradoException("Usuário não encontrado");
+            }
+            return list.get(0);
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }

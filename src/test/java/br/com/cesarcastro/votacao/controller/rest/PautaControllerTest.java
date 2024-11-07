@@ -1,12 +1,11 @@
 package br.com.cesarcastro.votacao.controller.rest;
 
-import br.com.cesarcastro.votacao.domain.model.entities.PautaEntity;
 import br.com.cesarcastro.votacao.domain.model.filtros.PautaFiltro;
 import br.com.cesarcastro.votacao.domain.model.requests.PautaRequest;
+import br.com.cesarcastro.votacao.domain.model.requests.VotoRequest;
 import br.com.cesarcastro.votacao.domain.model.responses.PautaResponse;
 import br.com.cesarcastro.votacao.domain.service.pauta.PautaService;
 import br.com.cesarcastro.votacao.mappers.PautaMapper;
-import br.com.cesarcastro.votacao.mappers.PautaMapperImpl;
 import br.com.cesarcastro.votacao.support.exceptions.BusinessException;
 import br.com.cesarcastro.votacao.support.exceptions.RecursoNaoEncontradoException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -14,22 +13,23 @@ import io.github.cdimascio.dotenv.Dotenv;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.context.annotation.Bean;
 import org.springframework.data.domain.Page;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 import static java.lang.Boolean.FALSE;
 import static java.lang.Boolean.TRUE;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -301,5 +301,53 @@ class PautaControllerTest {
         mockMvc.perform(patch(URL + "/1/encerrar-sessao"))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.message").value("Pauta já encerrada"));
+    }
+
+    @Test
+    public void  deveVotarComSucessoEmPautaAberta() throws Exception {
+
+        doNothing().when(pautaService).votar(any(VotoRequest.class));
+
+        mockMvc.perform(patch(URL+"/votar")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(new VotoRequest(1L, "99296756049", TRUE))))
+                .andExpect(status().isOk());
+
+    }
+
+    @Test
+    public void  deveVotarComErroVotoDuplicadoEmPautaAberta() throws Exception {
+
+        Mockito.doThrow(new BusinessException("Voto já computado")).when(pautaService).votar(any(VotoRequest.class));
+
+        mockMvc.perform(patch(URL+"/votar")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(new VotoRequest(1L, "99296756049", TRUE))))
+                .andExpect(status().isBadRequest());
+
+    }
+
+    @Test
+    public void  deveVotarComErroVotoUsuauarioNaoEncontrado() throws Exception {
+
+        Mockito.doThrow(new RecursoNaoEncontradoException("Usuario nao encontrado")).when(pautaService).votar(any(VotoRequest.class));
+
+        mockMvc.perform(patch(URL+"/votar")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(new VotoRequest(1L, "99296756049", TRUE))))
+                .andExpect(status().isNotFound());
+
+    }
+
+    @Test
+    public void  deveVotarComErroPautaNaoEncontrada() throws Exception {
+
+        Mockito.doThrow(new RecursoNaoEncontradoException("Pauta Não Encontrada")).when(pautaService).votar(any(VotoRequest.class));
+
+        mockMvc.perform(patch(URL+"/votar")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(new VotoRequest(1L, "99296756049", TRUE))))
+                .andExpect(status().isNotFound());
+
     }
 }

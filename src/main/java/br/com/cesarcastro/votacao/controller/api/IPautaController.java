@@ -184,6 +184,6 @@ public interface IPautaController {
             @ApiResponse(responseCode = "500", description = "Erro inesperado no servidor.", content = @Content),
             @ApiResponse(responseCode = "503", description = "Serviço não está disponível no momento.", content = @Content)
     })
-    @PatchMapping(produces = APPLICATION_JSON_VALUE)
+    @PatchMapping(produces = APPLICATION_JSON_VALUE, path = "/votar")
     ResponseEntity<Void> votar(@RequestBody @Valid VotoRequest request);
 }
