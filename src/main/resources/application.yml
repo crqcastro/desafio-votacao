@@ -45,8 +45,8 @@ spring:
   jpa:
     open-in-view: false
     hibernate:
-      dialect: org.hibernate.dialect.PostgreSQLDialect
-      ddl-auto: update
+      dialect: ${SPRING_JPA_DATABASE_PLATFORM}
+      ddl-auto: ${SPRING_JPA_HIBERNATE_DDL_AUTO}
     show-sql: true
   datasource:
     username: ${SPRING_DATASOURCE_USERNAME}
@@ -58,6 +58,3 @@ spring:
       connectionTimeout: 30000
       maximumPoolSize: 20
       maxLifetime: 30000
-r2dbc:
-  migrate:
-    resources-paths: classpath:/db/migration/*.sql

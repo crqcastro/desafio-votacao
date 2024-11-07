@@ -31,7 +31,7 @@ public class OpenApiConfig {
                          @Value("${info.app.description}") String description,
                          @Value("${info.app.artifactId}") String artifactId,
                          Environment env,
-                         @Value("${APP-ENDPOINT-BASE}") String appEndpointBase,
+                         @Value("${APP_ENDPOINT_BASE}") String appEndpointBase,
                          @Value("${server.port}") Integer port) {
         this.appName = appName;
         this.appVersion = appVersion;

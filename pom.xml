@@ -26,11 +26,12 @@
         <maven.compiler.release>17</maven.compiler.release>
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
-        <openapi.version>2.6.0</openapi.version>
+        <springdoc-openapi-ui.version>1.6.14</springdoc-openapi-ui.version>
         <java-dotenv.version>5.2.2</java-dotenv.version>
         <r2dbc-postgresql.version>1.0.7.RELEASE</r2dbc-postgresql.version>
         <reactor-test.version>3.5.9</reactor-test.version>
         <mapstruct.version>1.6.0.Beta1</mapstruct.version>
+        <easy-random-core.version>4.0.0</easy-random-core.version>
     </properties>
     <dependencies>
         <!-- SPRING - START -->
@@ -65,8 +66,8 @@
         <!-- OPENAPI - START -->
         <dependency>
             <groupId>org.springdoc</groupId>
-            <artifactId>springdoc-openapi-starter-webflux-ui</artifactId>
-            <version>${openapi.version}</version>
+            <artifactId>springdoc-openapi-ui</artifactId>
+            <version>${springdoc-openapi-ui.version}</version>
         </dependency>
         <!-- OPENAPI - END -->
         <!-- LOMBOK - START -->
@@ -76,13 +77,20 @@
             <optional>true</optional>
         </dependency>
         <!-- LOMBOK - END -->
-    <!-- MAPPER - START -->
+        <!-- MAPPER - START -->
         <dependency>
             <groupId>org.mapstruct</groupId>
             <artifactId>mapstruct</artifactId>
             <version>${mapstruct.version}</version>
         </dependency>
         <!-- MAPPER - END -->
+        <!-- SERIALIZATION - START -->
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>2.18.1</version>
+        </dependency>
+        <!-- SERIALIZATION - END -->
         <!-- TEST - START -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -96,10 +104,14 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>io.projectreactor</groupId>
-            <artifactId>reactor-test</artifactId>
-            <version>${reactor-test.version}</version>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
             <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jeasy</groupId>
+            <artifactId>easy-random-core</artifactId>
+            <version>${easy-random-core.version}</version>
         </dependency>
         <!-- TEST - END -->
     </dependencies>

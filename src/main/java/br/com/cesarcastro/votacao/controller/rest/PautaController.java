@@ -7,7 +7,6 @@ import br.com.cesarcastro.votacao.domain.service.pauta.PautaService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
-import reactor.core.publisher.Mono;
 
 import java.net.URI;
 

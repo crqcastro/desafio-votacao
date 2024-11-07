@@ -4,7 +4,6 @@ import br.com.cesarcastro.votacao.domain.model.entities.OpcaoEntity;
 import br.com.cesarcastro.votacao.domain.model.entities.PautaEntity;
 import br.com.cesarcastro.votacao.domain.model.requests.PautaRequest;
 import br.com.cesarcastro.votacao.domain.model.responses.PautaResponse;
-import br.com.cesarcastro.votacao.domain.repositories.OpcaoRepository;
 import br.com.cesarcastro.votacao.domain.repositories.PautaRepository;
 import br.com.cesarcastro.votacao.mappers.PautaMapper;
 import lombok.RequiredArgsConstructor;

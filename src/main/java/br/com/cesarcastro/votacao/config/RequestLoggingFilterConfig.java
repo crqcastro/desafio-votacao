@@ -1,28 +1,28 @@
 package br.com.cesarcastro.votacao.config;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.web.server.ServerWebExchange;
-import org.springframework.web.server.WebFilter;
-import org.springframework.web.server.WebFilterChain;
-import reactor.core.publisher.Mono;
+import org.springframework.web.filter.CommonsRequestLoggingFilter;
+
 
 @Configuration
 @Slf4j
-public class RequestLoggingFilterConfig implements WebFilter {
+public class RequestLoggingFilterConfig {
 
-    @Override
-    public Mono<Void> filter(ServerWebExchange exchange, WebFilterChain chain) {
-        log.info("Request URI: {}", exchange.getRequest().getURI());
-        log.info("Request Method: {}", exchange.getRequest().getMethod());
-        log.info("Request Headers: {}", exchange.getRequest().getHeaders());
+    @Bean
+    public CommonsRequestLoggingFilter logFilter() {
 
-        return chain.filter(exchange)
-                .doOnSuccess(aVoid -> {
-                    log.info("Response Status Code: {}", exchange.getResponse().getStatusCode());
-                })
-                .doOnError(throwable -> {
-                    log.error("Error: ", throwable);
-                });
+        CommonsRequestLoggingFilter filter = new CommonsRequestLoggingFilter();
+
+        filter.setIncludeClientInfo(true);
+        filter.setIncludeHeaders(false);
+        filter.setIncludePayload(true);
+        filter.setIncludeQueryString(true);
+
+        filter.setMaxPayloadLength(10000);
+        filter.setAfterMessagePrefix("REQUEST DATA: ");
+
+        return filter;
     }
 }
