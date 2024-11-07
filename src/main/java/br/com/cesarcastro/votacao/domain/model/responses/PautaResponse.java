@@ -14,5 +14,6 @@ public record PautaResponse(Long id,
                             LocalDateTime dataHoraInicio,
                             LocalDateTime dataHoraFim,
                             Boolean pautaAberta,
-                            List<OpcaoResponse> opcoes) {
+                            Long totalVotosSim,
+                            Long totalVotosNao) {
 }

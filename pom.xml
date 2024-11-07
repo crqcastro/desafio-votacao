@@ -10,7 +10,7 @@
     </parent>
     <groupId>br.com.cesarcastro</groupId>
     <artifactId>votacao</artifactId>
-    <version>1.0.1</version>
+    <version>1.0.2</version>
     <name>votacao</name>
     <description>Desafio de votação do SICRED</description>
     <developers>
@@ -141,6 +141,29 @@
                         </path>
                     </annotationProcessorPaths>
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>3.2.0</version>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <mainClass>br.com.cesarcastro.votacao.VotacaoApplication</mainClass>
+                        </manifest>
+                    </archive>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>repackage</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>

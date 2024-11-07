@@ -36,8 +36,4 @@ public class PautaRequest {
     @NotNull(message = "A data de fim é obrigatória")
     @FutureDate
     private LocalDateTime dataHoraFim;
-    @Schema(description = "Opções de votação.", requiredMode = REQUIRED)
-    @NotNull(message = "As opções de votação são obrigatórias.")
-    @Size(min = 2)
-    private List<OpcaoRequest> opcoes;
 }

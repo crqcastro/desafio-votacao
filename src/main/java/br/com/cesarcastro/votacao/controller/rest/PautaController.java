@@ -19,4 +19,9 @@ public class PautaController implements IPautaController {
         PautaResponse pautaResponse = service.cadastrarPauta(request);
         return ResponseEntity.created(URI.create("/v1/pauta/" + pautaResponse.id())).body(pautaResponse);
     }
+
+    @Override
+    public ResponseEntity<PautaResponse> consultarPautaPorId(Long id) {
+        return ResponseEntity.ok(service.consultarPautaPorId(id));
+    }
 }

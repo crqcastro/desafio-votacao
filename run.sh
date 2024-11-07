@@ -17,5 +17,5 @@ echo "Variáveis de ambiente carregadas a partir do arquivo $ENV_FILE"
 
 mvn clean package -DskipTests
 cp ./target/votacao-*.jar ./target/votacao.jar
-sudo docker compose up -d
+docker compose up -d
 java -jar ./target/votacao.jar --spring.profiles.active=$PROFILE

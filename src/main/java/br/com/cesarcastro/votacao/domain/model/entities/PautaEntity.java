@@ -16,7 +16,7 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
 import java.util.List;
 
-@Table(name = "tb_pauta", schema = "votacao")
+@Table(name = "tb_pauta")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -36,7 +36,9 @@ public class PautaEntity {
     private LocalDateTime dataHoraFim;
     @Column(name = "ativa")
     private Boolean pautaAberta;
-    @OneToMany(mappedBy = "pauta", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<OpcaoEntity> opcoes;
+    @Column(name = "totalVotosSim")
+    private Long totalVotosSim = 0L;
+    @Column(name = "totalVotosNao")
+    private Long totalVotosNao = 0L;
 
 }
