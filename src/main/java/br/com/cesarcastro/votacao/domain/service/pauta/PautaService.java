@@ -127,7 +127,7 @@ public class PautaService {
 
         validarPautaParaVotacao(pauta);
 
-        validarVoto(request.getId(), request.getCpf());
+        validarVoto(request.getId(), usuario);
 
         VotoEntity voto = VotoEntity.builder()
                 .cpf(request.getCpf())
@@ -150,8 +150,10 @@ public class PautaService {
         log.info("Voto registrado com sucesso! CPF: {}, Voto: {}, Pauta: {}", request.getCpf(), request.getVoto(), request.getId());
     }
 
-    private void validarVoto(Long id, String cpf) {
-        if(votoRepository.existsByCpfAndPautaId(cpf, id))
+    private void validarVoto(Long id, Usuario usuario) {
+        if(!usuario.getHabilitado().isHabilitado())
+            throw new BusinessException("Usuário não habilitado para votar");
+        if(votoRepository.existsByCpfAndPautaId(usuario.getCpf(), id))
             throw new BusinessException("Usuário já votou nesta pauta");
     }
 
