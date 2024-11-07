@@ -1,6 +1,7 @@
 package br.com.cesarcastro.votacao.domain.service.pauta;
 
 import br.com.cesarcastro.votacao.domain.model.entities.PautaEntity;
+import br.com.cesarcastro.votacao.domain.model.filtros.PautaFiltro;
 import br.com.cesarcastro.votacao.domain.model.requests.PautaRequest;
 import br.com.cesarcastro.votacao.domain.model.responses.PautaResponse;
 import br.com.cesarcastro.votacao.domain.repositories.PautaRepository;
@@ -12,6 +13,10 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
@@ -82,5 +87,14 @@ public class PautaServiceTest {
         when(pautaRepository.findById(1L)).thenReturn(Optional.empty());
         assertThrows(RecursoNaoEncontradoException.class, () -> this.pautaService.consultarPautaPorId(1L));
         verify(pautaRepository).findById(1L);
+    }
+
+    @Test
+    public void deveListarPautas() {
+        when(pautaRepository.findAll(any(Specification.class), (Pageable) any(Pageable.class))).thenReturn(Page.empty());
+        PageRequest pageRequest = PageRequest.of(0, 10);
+        Page<PautaResponse> listar = pautaService.listar(PautaFiltro.builder().pageRequest(pageRequest).build());
+        verify(pautaRepository).findAll(any(Specification.class), (Pageable) any(Pageable.class));
+        assertEquals(0, listar.getTotalElements());
     }
 }

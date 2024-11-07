@@ -1,5 +1,7 @@
 package br.com.cesarcastro.votacao.controller.rest;
 
+import br.com.cesarcastro.votacao.domain.model.entities.PautaEntity;
+import br.com.cesarcastro.votacao.domain.model.filtros.PautaFiltro;
 import br.com.cesarcastro.votacao.domain.model.requests.PautaRequest;
 import br.com.cesarcastro.votacao.domain.model.responses.PautaResponse;
 import br.com.cesarcastro.votacao.domain.service.pauta.PautaService;
@@ -16,10 +18,12 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Bean;
+import org.springframework.data.domain.Page;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
@@ -165,6 +169,17 @@ class PautaControllerTest {
         mockMvc.perform(get(URL + "/1"))
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.message").value("Pauta não encontrada"));
+    }
+
+    @Test
+    public void testDeveListarComSucesso() throws Exception {
+        Page<PautaResponse> expected = Page.empty();
+
+        PautaFiltro filtros = PautaFiltro.builder().build();
+        given(pautaService.listar(filtros)).willReturn(expected);
+
+        mockMvc.perform(get(URL + "?paginaAtual=0&itensPorPagina=30&orderBy=id&direction=desc"))
+                .andExpect(status().isOk());
     }
 
 }

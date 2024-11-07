@@ -1,14 +1,19 @@
 package br.com.cesarcastro.votacao.domain.service.pauta;
 
 import br.com.cesarcastro.votacao.domain.model.entities.PautaEntity;
+import br.com.cesarcastro.votacao.domain.model.filtros.PautaFiltro;
 import br.com.cesarcastro.votacao.domain.model.requests.PautaRequest;
 import br.com.cesarcastro.votacao.domain.model.responses.PautaResponse;
 import br.com.cesarcastro.votacao.domain.repositories.PautaRepository;
+import br.com.cesarcastro.votacao.domain.repositories.especifications.PautaSpecification;
 import br.com.cesarcastro.votacao.mappers.PautaMapper;
 import br.com.cesarcastro.votacao.support.exceptions.BusinessException;
 import br.com.cesarcastro.votacao.support.exceptions.RecursoNaoEncontradoException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -41,5 +46,22 @@ public class PautaService {
         return pautaRepository.findById(id)
                 .map(mapper::toPautaResponse)
                 .orElseThrow(() -> new RecursoNaoEncontradoException("Pauta não encontrada"));
+    }
+
+    public Page<PautaResponse> listar(PautaFiltro filtro) {
+
+        Pageable pageable = filtro.getPageRequest();
+
+        Specification<PautaEntity> specification = Specification
+                .where(PautaSpecification.idEqual(filtro.getId()))
+                .and(PautaSpecification.nomeContains(filtro.getNome()))
+                .and(PautaSpecification.dataInicial(filtro.getDataInicial()))
+                .and(PautaSpecification.dataFim(filtro.getDataFinal()))
+                .and(PautaSpecification.diaInicio(filtro.getDataInicio()))
+                .and(PautaSpecification.diaFim(filtro.getDataFim()))
+                .and(PautaSpecification.pautaAberta(filtro.getPautaAberta()));
+
+        return pautaRepository.findAll(specification, pageable)
+                .map(mapper::toPautaResponse);
     }
 }
