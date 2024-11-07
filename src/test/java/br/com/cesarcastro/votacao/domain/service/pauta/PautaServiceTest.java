@@ -1,10 +1,12 @@
 package br.com.cesarcastro.votacao.domain.service.pauta;
 
+import br.com.cesarcastro.votacao.domain.client.UsuarioClient;
 import br.com.cesarcastro.votacao.domain.model.entities.PautaEntity;
 import br.com.cesarcastro.votacao.domain.model.filtros.PautaFiltro;
 import br.com.cesarcastro.votacao.domain.model.requests.PautaRequest;
 import br.com.cesarcastro.votacao.domain.model.responses.PautaResponse;
 import br.com.cesarcastro.votacao.domain.repositories.PautaRepository;
+import br.com.cesarcastro.votacao.domain.repositories.VotoRepository;
 import br.com.cesarcastro.votacao.mappers.PautaMapper;
 import br.com.cesarcastro.votacao.support.exceptions.BusinessException;
 import br.com.cesarcastro.votacao.support.exceptions.RecursoNaoEncontradoException;
@@ -30,14 +32,18 @@ import static org.mockito.Mockito.when;
 public class PautaServiceTest {
     @Mock
     private PautaRepository pautaRepository;
+    @Mock
+    private VotoRepository votoRepository;
     private PautaMapper mapper;
     private PautaService pautaService;
+    @Mock
+    private UsuarioClient usuarioClient;
 
     @BeforeEach
     public void setUp() {
         MockitoAnnotations.openMocks(this);
         this.mapper = PautaMapper.INSTANCE;
-        this.pautaService = new PautaService(pautaRepository, mapper);
+        this.pautaService = new PautaService(pautaRepository, votoRepository, mapper, usuarioClient);
     }
 
     @Test

@@ -3,12 +3,14 @@ package br.com.cesarcastro.votacao.controller.rest;
 import br.com.cesarcastro.votacao.controller.api.IPautaController;
 import br.com.cesarcastro.votacao.domain.model.filtros.PautaFiltro;
 import br.com.cesarcastro.votacao.domain.model.requests.PautaRequest;
+import br.com.cesarcastro.votacao.domain.model.requests.VotoRequest;
 import br.com.cesarcastro.votacao.domain.model.responses.PautaResponse;
 import br.com.cesarcastro.votacao.domain.service.pauta.PautaService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -72,5 +74,11 @@ public class PautaController implements IPautaController {
     @Override
     public ResponseEntity<PautaResponse> encerrarSessao(Long id) {
         return ResponseEntity.ok(service.encerrarSessao(id));
+    }
+
+    @Override
+    public ResponseEntity<Void> votar(VotoRequest request) {
+        service.votar(request);
+        return ResponseEntity.status(HttpStatus.OK).build();
     }
 }

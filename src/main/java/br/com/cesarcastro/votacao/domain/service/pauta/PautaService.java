@@ -1,14 +1,20 @@
 package br.com.cesarcastro.votacao.domain.service.pauta;
 
+import br.com.cesarcastro.votacao.domain.client.UsuarioClient;
+import br.com.cesarcastro.votacao.domain.model.clients.in.Usuario;
 import br.com.cesarcastro.votacao.domain.model.entities.PautaEntity;
+import br.com.cesarcastro.votacao.domain.model.entities.VotoEntity;
 import br.com.cesarcastro.votacao.domain.model.filtros.PautaFiltro;
 import br.com.cesarcastro.votacao.domain.model.requests.PautaRequest;
+import br.com.cesarcastro.votacao.domain.model.requests.VotoRequest;
 import br.com.cesarcastro.votacao.domain.model.responses.PautaResponse;
 import br.com.cesarcastro.votacao.domain.repositories.PautaRepository;
+import br.com.cesarcastro.votacao.domain.repositories.VotoRepository;
 import br.com.cesarcastro.votacao.domain.repositories.especifications.PautaSpecification;
 import br.com.cesarcastro.votacao.mappers.PautaMapper;
 import br.com.cesarcastro.votacao.support.exceptions.BusinessException;
 import br.com.cesarcastro.votacao.support.exceptions.RecursoNaoEncontradoException;
+import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -17,6 +23,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 import static java.lang.Boolean.TRUE;
 
@@ -26,7 +33,9 @@ import static java.lang.Boolean.TRUE;
 public class PautaService {
 
     private final PautaRepository pautaRepository;
+    private final VotoRepository votoRepository;
     private final PautaMapper mapper;
+    private final UsuarioClient usuarioClient;
 
     public PautaResponse cadastrarPauta(PautaRequest pautaRequest) {
         validatePautaRequest(pautaRequest);
@@ -108,5 +117,46 @@ public class PautaService {
         pautaRepository.save(pauta);
 
         return mapper.toPautaResponse(pauta);
+    }
+
+    public void votar(VotoRequest request) {
+        Usuario usuario = usuarioClient.buscarUsuarioPorCpf(request.getCpf());
+
+        PautaEntity pauta = pautaRepository.findById(request.getId())
+                .orElseThrow(() -> new RecursoNaoEncontradoException("Pauta não encontrada"));
+
+        validarPautaParaVotacao(pauta);
+
+        validarVoto(request.getId(), request.getCpf());
+
+        VotoEntity voto = VotoEntity.builder()
+                .cpf(request.getCpf())
+                .voto(request.getVoto())
+                .pauta(pauta)
+                .build();
+
+        pauta.getVotos().add(voto);
+
+        if (voto.getVoto()) {
+            Long votosAtuais = pauta.getTotalVotosSim();
+            pauta.setTotalVotosSim(Objects.isNull(votosAtuais) ? 0 : votosAtuais + 1);
+        } else {
+            Long votosAtuais = pauta.getTotalVotosNao();
+            pauta.setTotalVotosNao(Objects.isNull(votosAtuais) ? 0 : votosAtuais + 1);
+        }
+
+        pautaRepository.save(pauta);
+
+        log.info("Voto registrado com sucesso! CPF: {}, Voto: {}, Pauta: {}", request.getCpf(), request.getVoto(), request.getId());
+    }
+
+    private void validarVoto(Long id, String cpf) {
+        if(votoRepository.existsByCpfAndPautaId(cpf, id))
+            throw new BusinessException("Usuário já votou nesta pauta");
+    }
+
+    private void validarPautaParaVotacao(PautaEntity pauta) {
+        if (!pauta.getPautaAberta())
+            throw new BusinessException("Pauta não está aberta para votação");
     }
 }

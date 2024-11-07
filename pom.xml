@@ -70,6 +70,13 @@
             <version>${springdoc-openapi-ui.version}</version>
         </dependency>
         <!-- OPENAPI - END -->
+        <!-- OAKCLIENT - START -->
+        <dependency>
+            <groupId>com.squareup.okhttp3</groupId>
+            <artifactId>okhttp</artifactId>
+            <version>5.0.0-alpha.12</version>
+        </dependency>
+        <!-- OAKCLIENT - END -->
         <!-- LOMBOK - START -->
         <dependency>
             <groupId>org.projectlombok</groupId>

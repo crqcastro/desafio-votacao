@@ -66,6 +66,7 @@ class PautaControllerTest {
         System.setProperty("SPRING_DATASOURCE_PASSWORD", dotenv.get("SPRING_DATASOURCE_PASSWORD"));
         System.setProperty("SPRING_JPA_DATABASE_PLATFORM", dotenv.get("SPRING_JPA_DATABASE_PLATFORM"));
         System.setProperty("SPRING_JPA_HIBERNATE_DDL_AUTO", dotenv.get("SPRING_JPA_HIBERNATE_DDL_AUTO"));
+        System.setProperty("USUARIO_API_URL", dotenv.get("USUARIO_API_URL"));
     }
 
     @BeforeEach
