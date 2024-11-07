@@ -1,6 +1,7 @@
 package br.com.cesarcastro.votacao.domain.service.pauta;
 
 import br.com.cesarcastro.votacao.domain.client.UsuarioClient;
+import br.com.cesarcastro.votacao.domain.model.clients.in.StatusEnum;
 import br.com.cesarcastro.votacao.domain.model.clients.in.Usuario;
 import br.com.cesarcastro.votacao.domain.model.entities.PautaEntity;
 import br.com.cesarcastro.votacao.domain.model.filtros.PautaFiltro;
@@ -25,6 +26,8 @@ import org.springframework.data.jpa.domain.Specification;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
+import static br.com.cesarcastro.votacao.domain.model.clients.in.StatusEnum.ABLE_TO_VOTE;
+import static br.com.cesarcastro.votacao.domain.model.clients.in.StatusEnum.UNABLE_TO_VOTE;
 import static java.lang.Boolean.FALSE;
 import static java.lang.Boolean.TRUE;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -160,7 +163,9 @@ public class PautaServiceTest {
 
     @Test
     public void deveVotarComSucesso(){
-        when(usuarioClient.buscarUsuarioPorCpf(anyString())).thenReturn(TestUtils.generateRandom(Usuario.class));
+        Usuario usuario = TestUtils.generateRandom(Usuario.class);
+        usuario.setHabilitado(ABLE_TO_VOTE);
+        when(usuarioClient.buscarUsuarioPorCpf(anyString())).thenReturn(usuario);
         PautaEntity entity = TestUtils.generateRandom(PautaEntity.class);
         entity.setPautaAberta(TRUE);
         when(pautaRepository.findById(anyLong())).thenReturn(Optional.of(entity));
@@ -181,7 +186,9 @@ public class PautaServiceTest {
 
     @Test
     public void deveVotarSemSucessoPautaNaoEncontrada(){
-        when(usuarioClient.buscarUsuarioPorCpf(anyString())).thenReturn(TestUtils.generateRandom(Usuario.class));
+        Usuario usuario = TestUtils.generateRandom(Usuario.class);
+        usuario.setHabilitado(ABLE_TO_VOTE);
+        when(usuarioClient.buscarUsuarioPorCpf(anyString())).thenReturn(usuario);
         when(pautaRepository.findById(anyLong())).thenReturn(Optional.empty());
         assertThrows(RecursoNaoEncontradoException.class, () -> this.pautaService.votar(TestUtils.generateRandom(VotoRequest.class)),
                 "Pauta não encontrada");
@@ -190,7 +197,9 @@ public class PautaServiceTest {
     }
     @Test
     public void deveVotarSemSucessoVotoInvalido(){
-        when(usuarioClient.buscarUsuarioPorCpf(anyString())).thenReturn(TestUtils.generateRandom(Usuario.class));
+        Usuario usuario = TestUtils.generateRandom(Usuario.class);
+        usuario.setHabilitado(ABLE_TO_VOTE);
+        when(usuarioClient.buscarUsuarioPorCpf(anyString())).thenReturn(usuario);
         PautaEntity entity = TestUtils.generateRandom(PautaEntity.class);
         entity.setPautaAberta(TRUE);
         when(pautaRepository.findById(anyLong())).thenReturn(Optional.of(entity));
@@ -201,10 +210,25 @@ public class PautaServiceTest {
         verify(pautaRepository).findById(anyLong());
         verify(votoRepository).existsByCpfAndPautaId(anyString(), anyLong());
     }
+    @Test
+    public void deveVotarSemSucessoVotoInvalidoUsuarioNaoHabilitado(){
+        Usuario usuario = TestUtils.generateRandom(Usuario.class);
+        usuario.setHabilitado(UNABLE_TO_VOTE);
+        when(usuarioClient.buscarUsuarioPorCpf(anyString())).thenReturn(usuario);
+        PautaEntity entity = TestUtils.generateRandom(PautaEntity.class);
+        entity.setPautaAberta(TRUE);
+        when(pautaRepository.findById(anyLong())).thenReturn(Optional.of(entity));
+        assertThrows(BusinessException.class, () -> this.pautaService.votar(TestUtils.generateRandom(VotoRequest.class)),
+                "Usuário não habilitado para votar");
+        verify(usuarioClient).buscarUsuarioPorCpf(anyString());
+        verify(pautaRepository).findById(anyLong());
+    }
 
     @Test
     public void deveVotarSemSucessoPautaEncerrada(){
-        when(usuarioClient.buscarUsuarioPorCpf(anyString())).thenReturn(TestUtils.generateRandom(Usuario.class));
+        Usuario usuario = TestUtils.generateRandom(Usuario.class);
+        usuario.setHabilitado(ABLE_TO_VOTE);
+        when(usuarioClient.buscarUsuarioPorCpf(anyString())).thenReturn(usuario);
         PautaEntity entity = TestUtils.generateRandom(PautaEntity.class);
         entity.setPautaAberta(FALSE);
         when(pautaRepository.findById(anyLong())).thenReturn(Optional.of(entity));

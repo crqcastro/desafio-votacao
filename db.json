@@ -3,27 +3,32 @@
     {
       "id": 1,
       "cpf": "14928546032",
-      "name": "Carolina Lara Santos"
+      "name": "Carolina Lara Santos",
+      "status": "UNABLE_TO_VOTE"
     },
     {
       "id": 2,
       "cpf": "93868910000",
-      "name": "Cristiane Mariah Galvão"
+      "name": "Cristiane Mariah Galvão",
+      "status": "ABLE_TO_VOTE"
     },
     {
       "id": 3,
       "cpf": "45595472030",
-      "name": "Daniela Catarina da Costa"
+      "name": "Daniela Catarina da Costa",
+      "status": "ABLE_TO_VOTE"
     },
     {
       "id": 4,
       "cpf": "99296756049",
-      "name": "Eduarda Maitê da Luz"
+      "name": "Eduarda Maitê da Luz",
+      "status": "ABLE_TO_VOTE"
     },
     {
       "id": 5,
       "cpf": "57175590032",
-      "name": "Elaine Nina Moura"
+      "name": "Elaine Nina Moura",
+      "status": "UNABLE_TO_VOTE"
     }
   ]
 }
