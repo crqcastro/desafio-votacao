@@ -63,4 +63,14 @@ public class PautaController implements IPautaController {
 
         return service.listar(filtro);
     }
+
+    @Override
+    public ResponseEntity<PautaResponse> abrirSessao(Long id, Integer minutos) {
+        return ResponseEntity.ok(service.abrirSessao(id, minutos));
+    }
+
+    @Override
+    public ResponseEntity<PautaResponse> encerrarSessao(Long id) {
+        return ResponseEntity.ok(service.encerrarSessao(id));
+    }
 }

@@ -7,6 +7,7 @@ import br.com.cesarcastro.votacao.domain.model.responses.PautaResponse;
 import br.com.cesarcastro.votacao.domain.service.pauta.PautaService;
 import br.com.cesarcastro.votacao.mappers.PautaMapper;
 import br.com.cesarcastro.votacao.mappers.PautaMapperImpl;
+import br.com.cesarcastro.votacao.support.exceptions.BusinessException;
 import br.com.cesarcastro.votacao.support.exceptions.RecursoNaoEncontradoException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.github.cdimascio.dotenv.Dotenv;
@@ -25,9 +26,12 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import static java.lang.Boolean.FALSE;
+import static java.lang.Boolean.TRUE;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -182,4 +186,119 @@ class PautaControllerTest {
                 .andExpect(status().isOk());
     }
 
+    @Test
+    public void deveAbrirSessaoComSucesso() throws Exception {
+        PautaResponse pautaResponse = new PautaResponse(1L,
+                "Pauta Teste",
+                "Nome da Pauta",
+                LocalDateTime.now(),
+                LocalDateTime.now().plusMinutes(1),
+                true,
+                0L,
+                0L);
+
+        given(pautaService.abrirSessao(1L, 1)).willReturn(pautaResponse);
+
+        mockMvc.perform(patch(URL + "/1/abrir-sessao?minutos=1"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(1))
+                .andExpect(jsonPath("$.descricao").value("Pauta Teste"))
+                .andExpect(jsonPath("$.nome").value("Nome da Pauta"))
+                .andExpect(jsonPath("$.pautaAberta").value(TRUE));
+    }
+
+    @Test
+    public void deveAbrirSessaoNotFoundParaPautaNaoEncontrada() throws Exception {
+
+        given(pautaService.abrirSessao(1L, 1)).willThrow(new RecursoNaoEncontradoException("Pauta não encontrada"));
+
+        mockMvc.perform(patch(URL + "/1/abrir-sessao?minutos=1"))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.message").value("Pauta não encontrada"));
+    }
+
+    @Test
+    public void deveAbrirSessaoBadRequestParaPautaJaEncerrada() throws Exception {
+        PautaResponse pautaResponse = new PautaResponse(1L,
+                "Pauta Teste",
+                "Nome da Pauta",
+                LocalDateTime.now().minusDays(1),
+                LocalDateTime.now().minusHours(1),
+                false,
+                0L,
+                0L);
+
+        given(pautaService.abrirSessao(1L, 1)).willThrow(new BusinessException("Pauta já encerrada"));
+
+        mockMvc.perform(patch(URL + "/1/abrir-sessao?minutos=1"))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message").value("Pauta já encerrada"));
+    }
+
+    @Test
+    public void deveAbrirSessaoBadRequestParaPautaJaAberta() throws Exception {
+        PautaResponse pautaResponse = new PautaResponse(1L,
+                "Pauta Teste",
+                "Nome da Pauta",
+                LocalDateTime.now().minusMinutes(1),
+                LocalDateTime.now().plusDays(1),
+                true,
+                0L,
+                0L);
+
+        given(pautaService.abrirSessao(1L, 1)).willThrow(new BusinessException("Pauta já aberta"));
+
+        mockMvc.perform(patch(URL + "/1/abrir-sessao?minutos=1"))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message").value("Pauta já aberta"));
+    }
+
+    @Test
+    public void deveEncerrarSessaoComSucesso() throws Exception {
+        PautaResponse pautaResponse = new PautaResponse(1L,
+                "Pauta Teste",
+                "Nome da Pauta",
+                LocalDateTime.now().minusMinutes(2),
+                LocalDateTime.now().plusMinutes(2),
+                false,
+                0L,
+                0L);
+
+        given(pautaService.encerrarSessao(1L)).willReturn(pautaResponse);
+
+        mockMvc.perform(patch(URL + "/1/encerrar-sessao"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(1))
+                .andExpect(jsonPath("$.descricao").value("Pauta Teste"))
+                .andExpect(jsonPath("$.nome").value("Nome da Pauta"))
+                .andExpect(jsonPath("$.pautaAberta").value(FALSE));
+    }
+
+    @Test
+    public void deveEncerrarSessaoNotFoundParaPautaNaoEncontrada() throws Exception {
+
+        given(pautaService.encerrarSessao(1L)).willThrow(new RecursoNaoEncontradoException("Pauta não encontrada"));
+
+        mockMvc.perform(patch(URL + "/1/encerrar-sessao"))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.message").value("Pauta não encontrada"));
+    }
+
+    @Test
+    public void deveEncerrarSessaoBadRequestParaPautaJaEncerrada() throws Exception {
+        PautaResponse pautaResponse = new PautaResponse(1L,
+                "Pauta Teste",
+                "Nome da Pauta",
+                LocalDateTime.now().minusDays(1),
+                LocalDateTime.now().minusHours(1),
+                false,
+                0L,
+                0L);
+
+        given(pautaService.encerrarSessao(1L)).willThrow(new BusinessException("Pauta já encerrada"));
+
+        mockMvc.perform(patch(URL + "/1/encerrar-sessao"))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message").value("Pauta já encerrada"));
+    }
 }
