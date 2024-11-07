@@ -1,10 +1,14 @@
 package br.com.cesarcastro.votacao.domain.service.pauta;
 
+import br.com.cesarcastro.votacao.domain.client.UsuarioClient;
+import br.com.cesarcastro.votacao.domain.model.clients.in.Usuario;
 import br.com.cesarcastro.votacao.domain.model.entities.PautaEntity;
 import br.com.cesarcastro.votacao.domain.model.filtros.PautaFiltro;
 import br.com.cesarcastro.votacao.domain.model.requests.PautaRequest;
+import br.com.cesarcastro.votacao.domain.model.requests.VotoRequest;
 import br.com.cesarcastro.votacao.domain.model.responses.PautaResponse;
 import br.com.cesarcastro.votacao.domain.repositories.PautaRepository;
+import br.com.cesarcastro.votacao.domain.repositories.VotoRepository;
 import br.com.cesarcastro.votacao.mappers.PautaMapper;
 import br.com.cesarcastro.votacao.support.exceptions.BusinessException;
 import br.com.cesarcastro.votacao.support.exceptions.RecursoNaoEncontradoException;
@@ -21,23 +25,31 @@ import org.springframework.data.jpa.domain.Specification;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
+import static java.lang.Boolean.FALSE;
+import static java.lang.Boolean.TRUE;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 public class PautaServiceTest {
     @Mock
     private PautaRepository pautaRepository;
+    @Mock
+    private VotoRepository votoRepository;
     private PautaMapper mapper;
     private PautaService pautaService;
+    @Mock
+    private UsuarioClient usuarioClient;
 
     @BeforeEach
     public void setUp() {
         MockitoAnnotations.openMocks(this);
         this.mapper = PautaMapper.INSTANCE;
-        this.pautaService = new PautaService(pautaRepository, mapper);
+        this.pautaService = new PautaService(pautaRepository, votoRepository, mapper, usuarioClient);
     }
 
     @Test
@@ -145,4 +157,61 @@ public class PautaServiceTest {
         verify(pautaRepository).findById(1L);
 
     }
+
+    @Test
+    public void deveVotarComSucesso(){
+        when(usuarioClient.buscarUsuarioPorCpf(anyString())).thenReturn(TestUtils.generateRandom(Usuario.class));
+        PautaEntity entity = TestUtils.generateRandom(PautaEntity.class);
+        entity.setPautaAberta(TRUE);
+        when(pautaRepository.findById(anyLong())).thenReturn(Optional.of(entity));
+        when(pautaRepository.save(any(PautaEntity.class))).thenAnswer(invocation -> invocation.getArgument(0));
+        this.pautaService.votar(TestUtils.generateRandom(VotoRequest.class));
+        verify(usuarioClient).buscarUsuarioPorCpf(anyString());
+        verify(pautaRepository).findById(anyLong());
+        verify(pautaRepository).save(any(PautaEntity.class));
+    }
+
+    @Test
+    public void deveVotarSemSucessoUsuarioInexistente(){
+        when(usuarioClient.buscarUsuarioPorCpf(anyString())).thenThrow(new RecursoNaoEncontradoException("Recurso não encontrado"));
+        assertThrows(RecursoNaoEncontradoException.class, () -> this.pautaService.votar(TestUtils.generateRandom(VotoRequest.class)),
+                "Recurso não encontrado");
+        verify(usuarioClient).buscarUsuarioPorCpf(anyString());
+    }
+
+    @Test
+    public void deveVotarSemSucessoPautaNaoEncontrada(){
+        when(usuarioClient.buscarUsuarioPorCpf(anyString())).thenReturn(TestUtils.generateRandom(Usuario.class));
+        when(pautaRepository.findById(anyLong())).thenReturn(Optional.empty());
+        assertThrows(RecursoNaoEncontradoException.class, () -> this.pautaService.votar(TestUtils.generateRandom(VotoRequest.class)),
+                "Pauta não encontrada");
+        verify(usuarioClient).buscarUsuarioPorCpf(anyString());
+        verify(pautaRepository).findById(anyLong());
+    }
+    @Test
+    public void deveVotarSemSucessoVotoInvalido(){
+        when(usuarioClient.buscarUsuarioPorCpf(anyString())).thenReturn(TestUtils.generateRandom(Usuario.class));
+        PautaEntity entity = TestUtils.generateRandom(PautaEntity.class);
+        entity.setPautaAberta(TRUE);
+        when(pautaRepository.findById(anyLong())).thenReturn(Optional.of(entity));
+        when(votoRepository.existsByCpfAndPautaId(anyString(), anyLong())).thenReturn(true);
+        assertThrows(BusinessException.class, () -> this.pautaService.votar(TestUtils.generateRandom(VotoRequest.class)),
+                "Usuário já votou nesta pauta");
+        verify(usuarioClient).buscarUsuarioPorCpf(anyString());
+        verify(pautaRepository).findById(anyLong());
+        verify(votoRepository).existsByCpfAndPautaId(anyString(), anyLong());
+    }
+
+    @Test
+    public void deveVotarSemSucessoPautaEncerrada(){
+        when(usuarioClient.buscarUsuarioPorCpf(anyString())).thenReturn(TestUtils.generateRandom(Usuario.class));
+        PautaEntity entity = TestUtils.generateRandom(PautaEntity.class);
+        entity.setPautaAberta(FALSE);
+        when(pautaRepository.findById(anyLong())).thenReturn(Optional.of(entity));
+        assertThrows(BusinessException.class, () -> this.pautaService.votar(TestUtils.generateRandom(VotoRequest.class)),
+                "Pauta não está aberta para votação");
+        verify(usuarioClient).buscarUsuarioPorCpf(anyString());
+        verify(pautaRepository).findById(anyLong());
+    }
+
 }

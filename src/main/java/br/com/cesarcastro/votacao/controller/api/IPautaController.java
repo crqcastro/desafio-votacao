@@ -1,6 +1,7 @@
 package br.com.cesarcastro.votacao.controller.api;
 
 import br.com.cesarcastro.votacao.domain.model.requests.PautaRequest;
+import br.com.cesarcastro.votacao.domain.model.requests.VotoRequest;
 import br.com.cesarcastro.votacao.domain.model.responses.PautaResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -27,16 +28,12 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseStatus;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.time.ZonedDateTime;
 
 import static org.springframework.format.annotation.DateTimeFormat.ISO.DATE;
 import static org.springframework.format.annotation.DateTimeFormat.ISO.DATE_TIME;
-import static org.springframework.http.HttpStatus.OK;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 @Tag(name = "Pauta", description = "Rotas para Pautas.")
@@ -173,6 +170,20 @@ public interface IPautaController {
     })
     @PatchMapping(produces = APPLICATION_JSON_VALUE, path = "/{id}/encerrar-sessao")
     ResponseEntity<PautaResponse> encerrarSessao(@PathVariable("id")
-                                              @Parameter(description = "Id da pauta a ser encerrada")
-                                              Long id);
+                                                 @Parameter(description = "Id da pauta a ser encerrada")
+                                                 Long id);
+
+    @Operation(summary = "Endpoint para escolha em pauta aberta")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Voto computado com sucesso.",
+                    content = @Content(mediaType = APPLICATION_JSON_VALUE,
+                            schema = @Schema(implementation = PautaResponse.class))),
+            @ApiResponse(responseCode = "400", description = "Requisição errada.", content = @Content),
+            @ApiResponse(responseCode = "404", description = "Recurso não encontrado.", content = @Content),
+            @ApiResponse(responseCode = "403", description = "Acesso negado.", content = @Content),
+            @ApiResponse(responseCode = "500", description = "Erro inesperado no servidor.", content = @Content),
+            @ApiResponse(responseCode = "503", description = "Serviço não está disponível no momento.", content = @Content)
+    })
+    @PatchMapping(produces = APPLICATION_JSON_VALUE, path = "/votar")
+    ResponseEntity<Void> votar(@RequestBody @Valid VotoRequest request);
 }

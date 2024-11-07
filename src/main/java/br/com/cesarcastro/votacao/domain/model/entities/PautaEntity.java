@@ -1,6 +1,5 @@
 package br.com.cesarcastro.votacao.domain.model.entities;
 
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -15,6 +14,9 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 import java.util.List;
+
+import static jakarta.persistence.CascadeType.ALL;
+import static jakarta.persistence.FetchType.EAGER;
 
 @Table(name = "tb_pauta")
 @Data
@@ -40,5 +42,7 @@ public class PautaEntity {
     private Long totalVotosSim = 0L;
     @Column(name = "totalVotosNao")
     private Long totalVotosNao = 0L;
+    @OneToMany(mappedBy = "pauta", cascade = ALL, orphanRemoval = true, fetch = EAGER)
+    private List<VotoEntity> votos;
 
 }
