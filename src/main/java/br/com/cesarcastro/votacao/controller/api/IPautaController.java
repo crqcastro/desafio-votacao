@@ -4,6 +4,7 @@ import br.com.cesarcastro.votacao.domain.model.requests.PautaRequest;
 import br.com.cesarcastro.votacao.domain.model.responses.PautaResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -20,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -78,7 +80,7 @@ public interface IPautaController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Pautas obtidas com sucesso.",
                     content = @Content(mediaType = APPLICATION_JSON_VALUE,
-                            schema = @Schema(implementation = PautaResponse.class))),
+                            array = @ArraySchema(schema = @Schema(implementation = PautaResponse.class)))),
             @ApiResponse(responseCode = "404", description = "Recurso não encontrado.", content = @Content),
             @ApiResponse(responseCode = "403", description = "Acesso negado.", content = @Content),
             @ApiResponse(responseCode = "500", description = "Erro inesperado no servidor.", content = @Content),
@@ -139,4 +141,38 @@ public interface IPautaController {
             @RequestParam(name = "direction", defaultValue = "asc", required = false)
             String direction
     );
+
+    @Operation(summary = "Endpoint para abrir sessao de pauta manualmente, sem considerar a data de inicio e fim. [ATENÇÃO!] Esse método altera as datas de inicio e fim cadastradas originalmente!")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Pautas obtidas com sucesso.",
+                    content = @Content(mediaType = APPLICATION_JSON_VALUE,
+                            schema = @Schema(implementation = PautaResponse.class))),
+            @ApiResponse(responseCode = "404", description = "Recurso não encontrado.", content = @Content),
+            @ApiResponse(responseCode = "403", description = "Acesso negado.", content = @Content),
+            @ApiResponse(responseCode = "500", description = "Erro inesperado no servidor.", content = @Content),
+            @ApiResponse(responseCode = "503", description = "Serviço não está disponível no momento.", content = @Content)
+    })
+    @PatchMapping(produces = APPLICATION_JSON_VALUE, path = "/{id}/abrir-sessao")
+    ResponseEntity<PautaResponse> abrirSessao(@PathVariable("id")
+                                              @Parameter(description = "Id da pauta a ser aberta")
+                                              Long id,
+                                              @Parameter(description = "Duração, em minutos, da pauta.")
+                                              @Min(value = 1)
+                                              @RequestParam(value = "minutos", defaultValue = "1", required = false)
+                                              Integer minutos);
+
+    @Operation(summary = "Endpoint para abrir sessao de pauta manualmente, sem considerar a data de inicio e fim. [ATENÇÃO!] Esse método altera as datas de inicio e fim cadastradas originalmente!")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Pautas obtidas com sucesso.",
+                    content = @Content(mediaType = APPLICATION_JSON_VALUE,
+                            schema = @Schema(implementation = PautaResponse.class))),
+            @ApiResponse(responseCode = "404", description = "Recurso não encontrado.", content = @Content),
+            @ApiResponse(responseCode = "403", description = "Acesso negado.", content = @Content),
+            @ApiResponse(responseCode = "500", description = "Erro inesperado no servidor.", content = @Content),
+            @ApiResponse(responseCode = "503", description = "Serviço não está disponível no momento.", content = @Content)
+    })
+    @PatchMapping(produces = APPLICATION_JSON_VALUE, path = "/{id}/encerrar-sessao")
+    ResponseEntity<PautaResponse> encerrarSessao(@PathVariable("id")
+                                              @Parameter(description = "Id da pauta a ser encerrada")
+                                              Long id);
 }

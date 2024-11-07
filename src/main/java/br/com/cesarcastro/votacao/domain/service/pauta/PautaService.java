@@ -18,6 +18,8 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 
+import static java.lang.Boolean.TRUE;
+
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -63,5 +65,48 @@ public class PautaService {
 
         return pautaRepository.findAll(specification, pageable)
                 .map(mapper::toPautaResponse);
+    }
+
+    public PautaResponse abrirSessao(Long id, Integer minutos) {
+        PautaEntity pauta = pautaRepository.findById(id)
+                .orElseThrow(() -> new RecursoNaoEncontradoException("Pauta não encontrada"));
+
+        if ((pauta.getDataHoraInicio().isBefore(LocalDateTime.now())
+                && pauta.getDataHoraFim().isAfter(LocalDateTime.now()))
+                || pauta.getPautaAberta()) {
+            throw new BusinessException("Pauta já aberta");
+        }
+
+        if (pauta.getDataHoraFim().isBefore(LocalDateTime.now())) {
+            throw new BusinessException("Pauta já encerrada");
+        }
+
+
+        pauta.setDataHoraInicio(LocalDateTime.now());
+        pauta.setDataHoraFim(pauta.getDataHoraInicio().plusMinutes(minutos));
+        pauta.setPautaAberta(TRUE);
+        pautaRepository.save(pauta);
+
+        return mapper.toPautaResponse(pauta);
+    }
+
+    public PautaResponse encerrarSessao(Long id) {
+        PautaEntity pauta = pautaRepository.findById(id)
+                .orElseThrow(() -> new RecursoNaoEncontradoException("Pauta não encontrada"));
+
+        if (pauta.getDataHoraFim().isBefore(LocalDateTime.now())) {
+            throw new BusinessException("Pauta já encerrada");
+        }
+
+        if (!pauta.getPautaAberta()) {
+            throw new BusinessException("Pauta já encerrada");
+        }
+
+        pauta.setDataHoraFim(LocalDateTime.now());
+
+        pauta.setPautaAberta(false);
+        pautaRepository.save(pauta);
+
+        return mapper.toPautaResponse(pauta);
     }
 }

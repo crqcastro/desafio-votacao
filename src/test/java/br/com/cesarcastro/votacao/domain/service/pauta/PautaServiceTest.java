@@ -67,7 +67,7 @@ public class PautaServiceTest {
     public void deveLancarBusinessExceptionQuandoDataHoraInicioForMaiorQueAFInal() {
         PautaRequest pautaRequest = TestUtils.generateRandom(PautaRequest.class);
         pautaRequest.setDataHoraInicio(LocalDateTime.now());
-        pautaRequest.setDataHoraFim(LocalDateTime.now().plusDays(1));
+        pautaRequest.setDataHoraFim(LocalDateTime.now().minusHours(1));
         assertThrows(BusinessException.class, () -> this.pautaService.cadastrarPauta(pautaRequest)
                 , "Data de fim da pauta não pode ser menor que a data de início");
     }
@@ -96,5 +96,53 @@ public class PautaServiceTest {
         Page<PautaResponse> listar = pautaService.listar(PautaFiltro.builder().pageRequest(pageRequest).build());
         verify(pautaRepository).findAll(any(Specification.class), (Pageable) any(Pageable.class));
         assertEquals(0, listar.getTotalElements());
+    }
+
+    @Test
+    public void deveAbrirSessaoComSucesso() {
+        PautaEntity pautaEntity = TestUtils.generateRandom(PautaEntity.class);
+        pautaEntity.setDataHoraInicio(LocalDateTime.now().plusDays(1));
+        pautaEntity.setDataHoraFim(LocalDateTime.now().plusDays(2));
+        pautaEntity.setPautaAberta(false);
+        when(pautaRepository.findById(1L)).thenReturn(Optional.of(pautaEntity));
+        when(pautaRepository.save(any())).thenAnswer(invocation -> invocation.getArgument(0));
+        PautaResponse pautaResponse = this.pautaService.abrirSessao(1L, 1);
+        verify(pautaRepository).save(any());
+        verify(pautaRepository).findById(1L);
+        assertEquals(true, pautaResponse.pautaAberta());
+    }
+
+    @Test
+    public void deveAbrirSessaoRecursoNaoEncontrado() {
+        when(pautaRepository.findById(1L)).thenReturn(Optional.empty());
+        assertThrows(RecursoNaoEncontradoException.class, () -> this.pautaService.abrirSessao(1L, 1),
+                "Pauta não encontrada");
+        verify(pautaRepository).findById(1L);
+    }
+
+    @Test
+    public void deveAbrirSessaoBusinessExceptionPautaEncerrada() {
+        PautaEntity pautaEntity = TestUtils.generateRandom(PautaEntity.class);
+        pautaEntity.setDataHoraInicio(LocalDateTime.now().minusMinutes(2));
+        pautaEntity.setDataHoraFim(LocalDateTime.now().minusMinutes(1));
+        pautaEntity.setPautaAberta(false);
+        when(pautaRepository.findById(1L)).thenReturn(Optional.of(pautaEntity));
+        assertThrows(BusinessException.class, () -> this.pautaService.abrirSessao(1L, 1),
+                "Pauta já encerrada");
+        verify(pautaRepository).findById(1L);
+
+    }
+
+    @Test
+    public void deveAbrirSessaoBusinessExceptionPautaJaAberta() {
+        PautaEntity pautaEntity = TestUtils.generateRandom(PautaEntity.class);
+        pautaEntity.setDataHoraInicio(LocalDateTime.now().minusMinutes(2));
+        pautaEntity.setDataHoraFim(LocalDateTime.now().plusMinutes(1));
+        pautaEntity.setPautaAberta(true);
+        when(pautaRepository.findById(1L)).thenReturn(Optional.of(pautaEntity));
+        assertThrows(BusinessException.class, () -> this.pautaService.abrirSessao(1L, 1),
+                "Pauta já aberta");
+        verify(pautaRepository).findById(1L);
+
     }
 }
