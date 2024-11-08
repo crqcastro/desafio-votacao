@@ -1,117 +1,124 @@
-# Votação
+# API de Votação
+Esta API REST se destina a gerenciar votações de pautas em uma assembleia.
+A API permite gerenciar e realizar votações em assembleias de maneira eficiente e automatizada.
 
-## Objetivo
+## Rotas
+- **Cadastrar nova pauta** [POST] /v1/pauta 
+- **Abrir sessão** [PATCH] /v1/pauta/{id_pauta}/abrir-sessao?minutos=5
+- **Encerrar sessão** [PATCH] /v1/pauta/{id_pauta}/encerrar-sessao
+- **Votar em sessão** [PATCH] /v1/pauta/votar
+- **Listar Votações** [GET] /v1/pauta
+- **Consultar pauta** [GET] /v1/pauta/{id}
+- **Contabilizar pauta** [GET] /v1/pauta/{id}/contabilizar
 
-No cooperativismo, cada associado possui um voto e as decisões são tomadas em assembleias, por votação. Imagine que você deve criar uma solução para dispositivos móveis para gerenciar e participar dessas sessões de votação.
-Essa solução deve ser executada na nuvem e promover as seguintes funcionalidades através de uma API REST:
+## Schedulers
+- **Encerrar sessões** Encerra sessões de votação que já passaram do tempo limite
+- **Habilita sessões** Habilita sessões de votação que ainda não foram habilitadas e estão dentro do prazo
 
-- Cadastrar uma nova pauta
-- Abrir uma sessão de votação em uma pauta (a sessão de votação deve ficar aberta por
-  um tempo determinado na chamada de abertura ou 1 minuto por default)
-- Receber votos dos associados em pautas (os votos são apenas 'Sim'/'Não'. Cada associado
-  é identificado por um id único e pode votar apenas uma vez por pauta)
-- Contabilizar os votos e dar o resultado da votação na pauta
+## Tecnologias utilizadas
+ - Java 17
+ - Spring 3
+ - JPA
+ - Postegresql
+ - Mockito
+ - OpenAPI
+ - Lombok
+ - Mapstruct
+ - java-dotenv
+ - Jacoco
+ - Sonarqube
+ - Maven
+ - H2
+ - Easy-Random
+ - Docker
+ - K6
 
-Para fins de exercício, a segurança das interfaces pode ser abstraída e qualquer chamada para as interfaces pode ser considerada como autorizada. A solução deve ser construída em java, usando Spring-boot, mas os frameworks e bibliotecas são de livre escolha (desde que não infrinja direitos de uso).
+## Serviços de terceiros
+- **jsonplaceholder** - API falsa e confiável gratuita para testes e prototipagem. [JSON PlaceHolder](https://jsonplaceholder.typicode.com/)
 
-É importante que as pautas e os votos sejam persistidos e que não sejam perdidos com o restart da aplicação.
+## Instalação
+### Pré-requisitos
+- Java 17
+- Maven
+- Docker
 
-O foco dessa avaliação é a comunicação entre o backend e o aplicativo mobile. Essa comunicação é feita através de mensagens no formato JSON, onde essas mensagens serão interpretadas pelo cliente para montar as telas onde o usuário vai interagir com o sistema. A aplicação cliente não faz parte da avaliação, apenas os componentes do servidor. O formato padrão dessas mensagens será detalhado no anexo 1.
-
-## Como proceder
-
-Por favor, realize o FORK desse repositório e implemente sua solução no FORK em seu repositório GItHub, ao final, notifique da conclusão para que possamos analisar o código implementado.
-
-Lembre de deixar todas as orientações necessárias para executar o seu código.
-
-### Tarefas bônus
-
-- Tarefa Bônus 1 - Integração com sistemas externos
-  - Criar uma Facade/Client Fake que retorna aleátoriamente se um CPF recebido é válido ou não.
-  - Caso o CPF seja inválido, a API retornará o HTTP Status 404 (Not found). Você pode usar geradores de CPF para gerar CPFs válidos
-  - Caso o CPF seja válido, a API retornará se o usuário pode (ABLE_TO_VOTE) ou não pode (UNABLE_TO_VOTE) executar a operação. Essa operação retorna resultados aleatórios, portanto um mesmo CPF pode funcionar em um teste e não funcionar no outro.
-
+### Passos
+- Clone o repositório 
+- na raiz do projeto docker
+```bash
+docker compose up -d
 ```
-// CPF Ok para votar
-{
-    "status": "ABLE_TO_VOTE
-}
-// CPF Nao Ok para votar - retornar 404 no client tb
-{
-    "status": "UNABLE_TO_VOTE
-}
+> [!IMPORTANT]  
+> Este comando irá subir um container com o banco de dados postgresql, banco de dados do sonar e o sonarqube
+
+- Acesse o sonarqube em http://localhost:9000 e configure o usuario.
+- Gere um token de conexão para poder colocar o projeto no sonarqube. [Criar token de acesso](https://docs.sonarsource.com/sonarqube/9.9/user-guide/user-account/generating-and-using-tokens/)
+- Faça o build do projeto
+```bash
+mvn clean install verify sonar:sonar -Dsonar.host.url=http://localhost:9000  -Dsonar.login=sqa_229a877fa15fb0def8c6cf17dfa0c99a087037c8
 ```
+> [!IMPORTANT]  
+> Substitua o token do script acima pelo token gerado no passo anterior
 
-Exemplos de retorno do serviço
+> [!NOTE]  
+> Não é obrigatório para executar o projeto o sonarqube, porém é uma boa prática para garantir a qualidade do código
 
-### Tarefa Bônus 2 - Performance
+> [!NOTE]  
+> Caso queira usar outro servidor do sonarqube, altere a url no script acima
 
-- Imagine que sua aplicação possa ser usada em cenários que existam centenas de
-  milhares de votos. Ela deve se comportar de maneira performática nesses
-  cenários
-- Testes de performance são uma boa maneira de garantir e observar como sua
-  aplicação se comporta
+- Suba as variáveis de ambientes necessárias para executar o projeto
+- ### Linux
+```bash
+PROFILE="local"
+DIR=${1:-"./docs"}
+REGEX=${2:-".*-$PROFILE\.env$"}
 
-### Tarefa Bônus 3 - Versionamento da API
+ENV_FILE=$(find "$DIR" -maxdepth 1 -type f -regextype posix-extended -regex ".*/$REGEX" | head -n 1)
 
-○ Como você versionaria a API da sua aplicação? Que estratégia usar?
+if [ -z "$ENV_FILE" ]; then
+    echo "Nenhum arquivo .env encontrado com o padrão '$REGEX' no diretório '$DIR'."
+    exit 1
+fi
 
-## O que será analisado
-
-- Simplicidade no design da solução (evitar over engineering)
-- Organização do código
-- Arquitetura do projeto
-- Boas práticas de programação (manutenibilidade, legibilidade etc)
-- Possíveis bugs
-- Tratamento de erros e exceções
-- Explicação breve do porquê das escolhas tomadas durante o desenvolvimento da solução
-- Uso de testes automatizados e ferramentas de qualidade
-- Limpeza do código
-- Documentação do código e da API
-- Logs da aplicação
-- Mensagens e organização dos commits
-
-## Dicas
-
-- Teste bem sua solução, evite bugs
-- Deixe o domínio das URLs de callback passiveis de alteração via configuração, para facilitar
-  o teste tanto no emulador, quanto em dispositivos fisicos.
-  Observações importantes
-- Não inicie o teste sem sanar todas as dúvidas
-- Iremos executar a aplicação para testá-la, cuide com qualquer dependência externa e
-  deixe claro caso haja instruções especiais para execução do mesmo
-  Classificação da informação: Uso Interno
-
-## Anexo 1
-
-### Introdução
-
-A seguir serão detalhados os tipos de tela que o cliente mobile suporta, assim como os tipos de campos disponíveis para a interação do usuário.
-
-### Tipo de tela – FORMULARIO
-
-A tela do tipo FORMULARIO exibe uma coleção de campos (itens) e possui um ou dois botões de ação na parte inferior.
-
-O aplicativo envia uma requisição POST para a url informada e com o body definido pelo objeto dentro de cada botão quando o mesmo é acionado. Nos casos onde temos campos de entrada
-de dados na tela, os valores informados pelo usuário são adicionados ao corpo da requisição. Abaixo o exemplo da requisição que o aplicativo vai fazer quando o botão “Ação 1” for acionado:
-
+export $(grep -v '^#' "$ENV_FILE" | xargs)
 ```
-POST http://seudominio.com/ACAO1
-{
-    “campo1”: “valor1”,
-    “campo2”: 123,
-    “idCampoTexto”: “Texto”,
-    “idCampoNumerico: 999
-    “idCampoData”: “01/01/2000”
-}
+### Windows
+```bat
+@echo off
+
+set "PROFILE=local"
+set "DIR=%~1"
+if "%DIR%"=="" set "DIR=.\docs"
+set "REGEX=.*-%PROFILE%.env$"
+
+for /f "delims=" %%f in ('dir /b "%DIR%" ^| findstr /R /C:"%REGEX%"') do (
+    set "ENV_FILE=%DIR%\%%f"
+    goto :found
+)
+
+echo Nenhum arquivo .env encontrado com o padrão '%REGEX%' no diretório '%DIR%'.
+exit /b 1
+
+:found
+for /f "usebackq delims=" %%a in (%ENV_FILE%) do (
+    set "line=%%a"
+    setlocal enabledelayedexpansion
+    if "!line:~0,1!" neq "#" (
+        for /f "tokens=1,* delims==" %%b in ("!line!") do set "%%b=%%c"
+    )
+    endlocal
+)
 ```
+> [!NOTE]  
+> Estes scripts carregam para o ambiente o conteudo do arquivo .env que está no diretório docs
 
-Obs: o formato da url acima é meramente ilustrativo e não define qualquer padrão de formato.
+- Execute o projeto
+```bash
+java -jar ./target/votacao.jar --spring.profiles.active=local
+```
+> [!TIP]
+> Para consultar se o projeto subiu, verifique a rota de health. [Actuator Health](http://localhost:8083/actuator/health)
 
-### Tipo de tela – SELECAO
-
-A tela do tipo SELECAO exibe uma lista de opções para que o usuário.
-
-O aplicativo envia uma requisição POST para a url informada e com o body definido pelo objeto dentro de cada item da lista de seleção, quando o mesmo é acionado, semelhando ao funcionamento dos botões da tela FORMULARIO.
-
-# desafio-votacao
+## Documentação
+- Postman: Importa a collection disponível dentro da pasta docs. [Collection](https://raw.githubusercontent.com/crqcastro/desafio-votacao/refs/heads/main/docs/votacao.postman_collection.json)
+- OpenAPI: Acesse a documentação da API em [OpenAPI](http://localhost:8083/swagger-ui/index.html)

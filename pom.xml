@@ -79,13 +79,6 @@
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
         <!-- SPRING - END -->
-        <!-- OPENFEIGN - START -->
-        <dependency>
-            <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-starter-openfeign</artifactId>
-            <version>${spring-cloud-starter-openfeign.version}</version>
-        </dependency>
-        <!-- OPENFEIGN - END -->
         <!-- ACTUATOR - START -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
