@@ -60,6 +60,6 @@ spring:
       maxLifetime: 30000
 logging:
   level:
-    root: error
-    org.springframework.web: error
-    br.com.cesarcastro.votacao: error
+    root: info
+    org.springframework.web: info
+    br.com.cesarcastro.votacao: info
