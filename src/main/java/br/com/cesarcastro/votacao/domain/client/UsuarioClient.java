@@ -1,8 +1,8 @@
 package br.com.cesarcastro.votacao.domain.client;
 
 import br.com.cesarcastro.votacao.domain.model.clients.in.Usuario;
+import br.com.cesarcastro.votacao.support.exceptions.InternalErrorException;
 import br.com.cesarcastro.votacao.support.exceptions.RecursoNaoEncontradoException;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Value;
@@ -10,17 +10,17 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 
+import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 
 @Component
 public class UsuarioClient {
+    public static final String X_APPLICATION_ORIGIN = "x-application-origin";
+    public static final String APPLICATION_NAME = "votacao";
     private final Client client;
     private final ObjectMapper om;
     private final String urlBase;
-
-    public static final String X_APPLICATION_ORIGIN = "x-application-origin";
-    public static final String APPLICATION_NAME = "votacao";
 
     public UsuarioClient(Client client,
                          ObjectMapper om,
@@ -35,13 +35,14 @@ public class UsuarioClient {
         try {
             List<Usuario> list = om.readValue(
                     client.get(urlBase.concat("/user").concat("?cpf=").concat(cpf), obterHeaders()),
-                    new TypeReference<List<Usuario>>() {});
-            if(list.isEmpty()) {
+                    new TypeReference<List<Usuario>>() {
+                    });
+            if (list.isEmpty()) {
                 throw new RecursoNaoEncontradoException("Usuário não encontrado");
             }
             return list.get(0);
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
+        } catch (IOException e) {
+            throw new InternalErrorException(e.getMessage());
         }
     }
 

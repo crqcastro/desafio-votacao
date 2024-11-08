@@ -108,7 +108,7 @@ public class ClientConfig {
 
             } catch (HttpClientErrorException | HttpServerErrorException e) {
                 this.status = HttpStatus.valueOf(e.getStatusCode().value());
-                if(e.getStatusCode().value()==404){
+                if (e.getStatusCode().value() == 404) {
                     throw new RecursoNaoEncontradoException("Recurso não encontrado");
                 }
                 throw e;

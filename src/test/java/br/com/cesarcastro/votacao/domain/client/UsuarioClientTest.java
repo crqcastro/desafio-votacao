@@ -58,7 +58,7 @@ class UsuarioClientTest {
     }
 
     @Test
-    void testBuscarUsuarioPorCpfDeveLancarRunTimeExceptionFormatoResposta() throws JsonProcessingException {
+    void testBuscarUsuarioPorCpfDeveLancarRunTimeExceptionFormatoResposta() {
         String cpf = "12345678900";
         when(client.get(anyString(), any(HttpHeaders.class))).thenReturn("invalid json");
         assertThrows(RuntimeException.class, () -> usuarioClient.buscarUsuarioPorCpf(cpf));

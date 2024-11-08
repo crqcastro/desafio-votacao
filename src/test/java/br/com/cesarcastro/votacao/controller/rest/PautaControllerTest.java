@@ -5,13 +5,11 @@ import br.com.cesarcastro.votacao.domain.model.requests.PautaRequest;
 import br.com.cesarcastro.votacao.domain.model.requests.VotoRequest;
 import br.com.cesarcastro.votacao.domain.model.responses.PautaResponse;
 import br.com.cesarcastro.votacao.domain.service.pauta.PautaService;
-import br.com.cesarcastro.votacao.mappers.PautaMapper;
 import br.com.cesarcastro.votacao.support.exceptions.BusinessException;
 import br.com.cesarcastro.votacao.support.exceptions.RecursoNaoEncontradoException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.github.cdimascio.dotenv.Dotenv;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +27,6 @@ import static java.lang.Boolean.TRUE;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -46,9 +43,6 @@ class PautaControllerTest {
     @MockBean
     private PautaService pautaService;
 
-    @MockBean
-    private PautaMapper pautaMapper;
-
     @Autowired
     private MockMvc mockMvc;
 
@@ -56,7 +50,7 @@ class PautaControllerTest {
     private ObjectMapper objectMapper;
 
     @BeforeAll
-    public static void setUpAll() {
+    static void setUpAll() {
         Dotenv dotenv = Dotenv.configure()
                 .filename("votacao-test.env")
                 .load();
@@ -69,13 +63,8 @@ class PautaControllerTest {
         System.setProperty("USUARIO_API_URL", dotenv.get("USUARIO_API_URL"));
     }
 
-    @BeforeEach
-    public void setUp() {
-
-    }
-
     @Test
-    public void testDeveCadastrarPautaComSucesso() throws Exception {
+    void testDeveCadastrarPautaComSucesso() throws Exception {
         LocalDateTime dataHoraInicio = LocalDateTime.now().plusDays(1);
         LocalDateTime dataHoraFim = LocalDateTime.now().plusDays(2);
 
@@ -86,8 +75,8 @@ class PautaControllerTest {
         pautaRequest.setDataHoraFim(dataHoraFim);
 
         PautaResponse pautaResponse = new PautaResponse(1L,
-                "Pauta Teste",
                 "Nome da Pauta",
+                "Pauta Teste",
                 null,
                 null,
                 null,
@@ -106,7 +95,7 @@ class PautaControllerTest {
     }
 
     @Test
-    public void testDeveReceberBadRequestAoCadastrarPautaComDataInferiorAAtual() throws Exception {
+    void testDeveReceberBadRequestAoCadastrarPautaComDataInferiorAAtual() throws Exception {
         LocalDateTime dataHoraInicio = LocalDateTime.now().minusDays(1);
         LocalDateTime dataHoraFim = LocalDateTime.now().plusDays(2);
 
@@ -126,7 +115,7 @@ class PautaControllerTest {
     }
 
     @Test
-    public void testDeveReceberBadRequestAoCadastrarPautaComDataFinalMenorQueInicial() throws Exception {
+    void testDeveReceberBadRequestAoCadastrarPautaComDataFinalMenorQueInicial() throws Exception {
         LocalDateTime dataHoraInicio = LocalDateTime.now().plusDays(1);
         LocalDateTime dataHoraFim = LocalDateTime.now();
 
@@ -146,7 +135,7 @@ class PautaControllerTest {
     }
 
     @Test
-    public void testDeveConsultarPautaPorIdComSucesso() throws Exception {
+    void testDeveConsultarPautaPorIdComSucesso() throws Exception {
 
         PautaResponse pautaMock = new PautaResponse(1L,
                 "Pauta Teste",
@@ -167,7 +156,7 @@ class PautaControllerTest {
     }
 
     @Test
-    public void testDeveConsultarPautaPorIdRecebendoNotFound() throws Exception {
+    void testDeveConsultarPautaPorIdRecebendoNotFound() throws Exception {
 
         given(pautaService.consultarPautaPorId(1L)).willThrow(new RecursoNaoEncontradoException("Pauta não encontrada"));
 
@@ -177,7 +166,7 @@ class PautaControllerTest {
     }
 
     @Test
-    public void testDeveListarComSucesso() throws Exception {
+    void testDeveListarComSucesso() throws Exception {
         Page<PautaResponse> expected = Page.empty();
 
         PautaFiltro filtros = PautaFiltro.builder().build();
@@ -188,10 +177,10 @@ class PautaControllerTest {
     }
 
     @Test
-    public void deveAbrirSessaoComSucesso() throws Exception {
+    void deveAbrirSessaoComSucesso() throws Exception {
         PautaResponse pautaResponse = new PautaResponse(1L,
-                "Pauta Teste",
                 "Nome da Pauta",
+                "Pauta Teste",
                 LocalDateTime.now(),
                 LocalDateTime.now().plusMinutes(1),
                 true,
@@ -209,7 +198,7 @@ class PautaControllerTest {
     }
 
     @Test
-    public void deveAbrirSessaoNotFoundParaPautaNaoEncontrada() throws Exception {
+    void deveAbrirSessaoNotFoundParaPautaNaoEncontrada() throws Exception {
 
         given(pautaService.abrirSessao(1L, 1)).willThrow(new RecursoNaoEncontradoException("Pauta não encontrada"));
 
@@ -219,16 +208,7 @@ class PautaControllerTest {
     }
 
     @Test
-    public void deveAbrirSessaoBadRequestParaPautaJaEncerrada() throws Exception {
-        PautaResponse pautaResponse = new PautaResponse(1L,
-                "Pauta Teste",
-                "Nome da Pauta",
-                LocalDateTime.now().minusDays(1),
-                LocalDateTime.now().minusHours(1),
-                false,
-                0L,
-                0L);
-
+    void deveAbrirSessaoBadRequestParaPautaJaEncerrada() throws Exception {
         given(pautaService.abrirSessao(1L, 1)).willThrow(new BusinessException("Pauta já encerrada"));
 
         mockMvc.perform(patch(URL + "/1/abrir-sessao?minutos=1"))
@@ -237,15 +217,7 @@ class PautaControllerTest {
     }
 
     @Test
-    public void deveAbrirSessaoBadRequestParaPautaJaAberta() throws Exception {
-        PautaResponse pautaResponse = new PautaResponse(1L,
-                "Pauta Teste",
-                "Nome da Pauta",
-                LocalDateTime.now().minusMinutes(1),
-                LocalDateTime.now().plusDays(1),
-                true,
-                0L,
-                0L);
+    void deveAbrirSessaoBadRequestParaPautaJaAberta() throws Exception {
 
         given(pautaService.abrirSessao(1L, 1)).willThrow(new BusinessException("Pauta já aberta"));
 
@@ -255,10 +227,10 @@ class PautaControllerTest {
     }
 
     @Test
-    public void deveEncerrarSessaoComSucesso() throws Exception {
+    void deveEncerrarSessaoComSucesso() throws Exception {
         PautaResponse pautaResponse = new PautaResponse(1L,
-                "Pauta Teste",
                 "Nome da Pauta",
+                "Pauta Teste",
                 LocalDateTime.now().minusMinutes(2),
                 LocalDateTime.now().plusMinutes(2),
                 false,
@@ -276,7 +248,7 @@ class PautaControllerTest {
     }
 
     @Test
-    public void deveEncerrarSessaoNotFoundParaPautaNaoEncontrada() throws Exception {
+    void deveEncerrarSessaoNotFoundParaPautaNaoEncontrada() throws Exception {
 
         given(pautaService.encerrarSessao(1L)).willThrow(new RecursoNaoEncontradoException("Pauta não encontrada"));
 
@@ -286,15 +258,7 @@ class PautaControllerTest {
     }
 
     @Test
-    public void deveEncerrarSessaoBadRequestParaPautaJaEncerrada() throws Exception {
-        PautaResponse pautaResponse = new PautaResponse(1L,
-                "Pauta Teste",
-                "Nome da Pauta",
-                LocalDateTime.now().minusDays(1),
-                LocalDateTime.now().minusHours(1),
-                false,
-                0L,
-                0L);
+    void deveEncerrarSessaoBadRequestParaPautaJaEncerrada() throws Exception {
 
         given(pautaService.encerrarSessao(1L)).willThrow(new BusinessException("Pauta já encerrada"));
 
@@ -304,11 +268,11 @@ class PautaControllerTest {
     }
 
     @Test
-    public void  deveVotarComSucessoEmPautaAberta() throws Exception {
+    void deveVotarComSucessoEmPautaAberta() throws Exception {
 
         doNothing().when(pautaService).votar(any(VotoRequest.class));
 
-        mockMvc.perform(patch(URL+"/votar")
+        mockMvc.perform(patch(URL + "/votar")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(new VotoRequest(1L, "99296756049", TRUE))))
                 .andExpect(status().isOk());
@@ -316,11 +280,11 @@ class PautaControllerTest {
     }
 
     @Test
-    public void  deveVotarComErroVotoDuplicadoEmPautaAberta() throws Exception {
+    void deveVotarComErroVotoDuplicadoEmPautaAberta() throws Exception {
 
         Mockito.doThrow(new BusinessException("Voto já computado")).when(pautaService).votar(any(VotoRequest.class));
 
-        mockMvc.perform(patch(URL+"/votar")
+        mockMvc.perform(patch(URL + "/votar")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(new VotoRequest(1L, "99296756049", TRUE))))
                 .andExpect(status().isBadRequest());
@@ -328,11 +292,11 @@ class PautaControllerTest {
     }
 
     @Test
-    public void  deveVotarComErroVotoUsuauarioNaoEncontrado() throws Exception {
+    void deveVotarComErroVotoUsuauarioNaoEncontrado() throws Exception {
 
         Mockito.doThrow(new RecursoNaoEncontradoException("Usuario nao encontrado")).when(pautaService).votar(any(VotoRequest.class));
 
-        mockMvc.perform(patch(URL+"/votar")
+        mockMvc.perform(patch(URL + "/votar")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(new VotoRequest(1L, "99296756049", TRUE))))
                 .andExpect(status().isNotFound());
@@ -340,11 +304,11 @@ class PautaControllerTest {
     }
 
     @Test
-    public void  deveVotarComErroPautaNaoEncontrada() throws Exception {
+    void deveVotarComErroPautaNaoEncontrada() throws Exception {
 
         Mockito.doThrow(new RecursoNaoEncontradoException("Pauta Não Encontrada")).when(pautaService).votar(any(VotoRequest.class));
 
-        mockMvc.perform(patch(URL+"/votar")
+        mockMvc.perform(patch(URL + "/votar")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(new VotoRequest(1L, "99296756049", TRUE))))
                 .andExpect(status().isNotFound());

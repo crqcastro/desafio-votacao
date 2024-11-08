@@ -21,7 +21,7 @@ public interface PautaMapper {
     PautaEntity toPautaEntity(PautaRequest source);
 
     @Qualifier("longZero")
-    default Long longZero(){
+    default Long longZero() {
         return 0L;
     }
 

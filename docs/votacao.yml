@@ -1,0 +1,513 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "votacao",
+    "description": "Desafio de votação do SICRED",
+    "contact": {
+      "name": "Cesar Castro",
+      "email": "cesarrqc@gmail.com"
+    },
+    "license": {
+      "name": "Apache 2.0",
+      "url": "http://springdoc.org"
+    },
+    "version": "1.0.7"
+  },
+  "externalDocs": {
+    "description": "Desafio de votação do SICRED",
+    "url": "https://github.com/crqcastro/desafio-votacao"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:8083/",
+      "description": "Local Server"
+    }
+  ],
+  "tags": [
+    {
+      "name": "Pauta",
+      "description": "Rotas para Pautas."
+    }
+  ],
+  "paths": {
+    "/v1/pauta": {
+      "get": {
+        "tags": [
+          "Pauta"
+        ],
+        "summary": "Endpoint para Consultar listar pautas.",
+        "operationId": "listar",
+        "parameters": [
+          {
+            "name": "dataHoraInicio",
+            "in": "query",
+            "description": "A data/hora exata de inicio da pauta para pesquisa no formato ISO-DATE_TIME.",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "dataHoraFim",
+            "in": "query",
+            "description": "A data/hora exata do fim da pauta para pesquisa no formato ISO-DATE_TIME.",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "dataInicio",
+            "in": "query",
+            "description": "A data do inicio da pauta para pesquisa no formato ISO-DATE.",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "date"
+            }
+          },
+          {
+            "name": "dataFim",
+            "in": "query",
+            "description": "A data do fim da pauta para pesquisa no formato ISO-DATE.",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "date"
+            }
+          },
+          {
+            "name": "pautaAberta",
+            "in": "query",
+            "description": "Pautas abertas (true/false).",
+            "required": false,
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "id",
+            "in": "query",
+            "description": "Id da pauta a ser pesquisada.",
+            "required": false,
+            "schema": {
+              "minimum": 1,
+              "type": "integer",
+              "format": "int64"
+            }
+          },
+          {
+            "name": "nome",
+            "in": "query",
+            "description": "Nome da pauta.",
+            "required": false,
+            "schema": {
+              "maxLength": 32,
+              "minLength": 8,
+              "type": "string"
+            }
+          },
+          {
+            "name": "paginaAtual",
+            "in": "query",
+            "description": "Página a ser retornada pela consulta.",
+            "required": false,
+            "schema": {
+              "minimum": 0,
+              "type": "integer",
+              "format": "int32",
+              "default": 0
+            }
+          },
+          {
+            "name": "itensPorPagina",
+            "in": "query",
+            "description": "Quantidade máxima de registros retornados em cada página.",
+            "required": false,
+            "schema": {
+              "maximum": 100,
+              "minimum": 1,
+              "type": "integer",
+              "format": "int32",
+              "default": 5
+            }
+          },
+          {
+            "name": "orderBy",
+            "in": "query",
+            "description": "Campo a ser ordenado",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "id"
+            }
+          },
+          {
+            "name": "direction",
+            "in": "query",
+            "description": "Direção da ordenação (asc/desc)",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "asc"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Pautas obtidas com sucesso.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/PautaResponse"
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Acesso negado."
+          },
+          "404": {
+            "description": "Recurso não encontrado."
+          },
+          "503": {
+            "description": "Serviço não está disponível no momento."
+          },
+          "500": {
+            "description": "Erro inesperado no servidor."
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Pauta"
+        ],
+        "summary": "Endpoint para cadastrar uma nova pauta.",
+        "operationId": "cadastrarPauta",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Pauta"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "400": {
+            "description": "Requisição com formato inválido."
+          },
+          "200": {
+            "description": "Pauta cadastrada com sucesso.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PautaResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Acesso negado."
+          },
+          "503": {
+            "description": "Serviço não está disponível no momento."
+          },
+          "500": {
+            "description": "Erro inesperado no servidor."
+          }
+        }
+      }
+    },
+    "/v1/pauta/{id}/encerrar-sessao": {
+      "patch": {
+        "tags": [
+          "Pauta"
+        ],
+        "summary": "Endpoint para abrir sessao de pauta manualmente, sem considerar a data de inicio e fim. [ATENÇÃO!] Esse método altera as datas de inicio e fim cadastradas originalmente!",
+        "operationId": "encerrarSessao",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Id da pauta a ser encerrada",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Pautas obtidas com sucesso.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PautaResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Acesso negado."
+          },
+          "404": {
+            "description": "Recurso não encontrado."
+          },
+          "503": {
+            "description": "Serviço não está disponível no momento."
+          },
+          "500": {
+            "description": "Erro inesperado no servidor."
+          }
+        }
+      }
+    },
+    "/v1/pauta/{id}/abrir-sessao": {
+      "patch": {
+        "tags": [
+          "Pauta"
+        ],
+        "summary": "Endpoint para abrir sessao de pauta manualmente, sem considerar a data de inicio e fim. [ATENÇÃO!] Esse método altera as datas de inicio e fim cadastradas originalmente!",
+        "operationId": "abrirSessao",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Id da pauta a ser aberta",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          },
+          {
+            "name": "minutos",
+            "in": "query",
+            "description": "Duração, em minutos, da pauta.",
+            "required": false,
+            "schema": {
+              "minimum": 1,
+              "type": "integer",
+              "format": "int32",
+              "default": 1
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Pautas obtidas com sucesso.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PautaResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Acesso negado."
+          },
+          "404": {
+            "description": "Recurso não encontrado."
+          },
+          "503": {
+            "description": "Serviço não está disponível no momento."
+          },
+          "500": {
+            "description": "Erro inesperado no servidor."
+          }
+        }
+      }
+    },
+    "/v1/pauta/votar": {
+      "patch": {
+        "tags": [
+          "Pauta"
+        ],
+        "summary": "Endpoint para escolha em pauta aberta",
+        "operationId": "votar",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/VotoRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "400": {
+            "description": "Requisição errada."
+          },
+          "403": {
+            "description": "Acesso negado."
+          },
+          "404": {
+            "description": "Recurso não encontrado."
+          },
+          "503": {
+            "description": "Serviço não está disponível no momento."
+          },
+          "200": {
+            "description": "Voto computado com sucesso.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PautaResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erro inesperado no servidor."
+          }
+        }
+      }
+    },
+    "/v1/pauta/{id}": {
+      "get": {
+        "tags": [
+          "Pauta"
+        ],
+        "summary": "Endpoint para Consultar uma pauta pelo Id.",
+        "operationId": "consultarPautaPorId",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "O identificador da pauta.",
+            "required": true,
+            "schema": {
+              "minimum": 1,
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "403": {
+            "description": "Acesso negado."
+          },
+          "404": {
+            "description": "Recurso não encontrado."
+          },
+          "503": {
+            "description": "Serviço não está disponível no momento."
+          },
+          "200": {
+            "description": "Pauta obtida com sucesso.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PautaResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erro inesperado no servidor."
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Pauta": {
+        "required": [
+          "dataHoraFim",
+          "dataHoraInicio",
+          "nome"
+        ],
+        "type": "object",
+        "properties": {
+          "nome": {
+            "type": "string",
+            "description": "Nome da pauta."
+          },
+          "descricao": {
+            "type": "string",
+            "description": "Descrição sobre a pauta."
+          },
+          "dataHoraInicio": {
+            "type": "string",
+            "description": "Data e hora que a votação deve iniciar.",
+            "format": "date-time"
+          },
+          "dataHoraFim": {
+            "type": "string",
+            "description": "Data e hora que a votação deve finalizar.",
+            "format": "date-time"
+          }
+        },
+        "description": "Requisição para criação de uma nova pauta."
+      },
+      "PautaResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "descricao": {
+            "type": "string"
+          },
+          "nome": {
+            "type": "string"
+          },
+          "dataHoraInicio": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "dataHoraFim": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "pautaAberta": {
+            "type": "boolean"
+          },
+          "totalVotosSim": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "totalVotosNao": {
+            "type": "integer",
+            "format": "int64"
+          }
+        }
+      },
+      "VotoRequest": {
+        "required": [
+          "cpf",
+          "id",
+          "voto"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "description": "Id da pauta.",
+            "format": "int64"
+          },
+          "cpf": {
+            "type": "string",
+            "description": "CPF do usuario votante."
+          },
+          "voto": {
+            "type": "boolean",
+            "description": "Voto selecionado para a pauta."
+          }
+        }
+      }
+    }
+  }
+}
