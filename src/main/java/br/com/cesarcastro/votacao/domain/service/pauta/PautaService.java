@@ -14,7 +14,6 @@ import br.com.cesarcastro.votacao.domain.repositories.especifications.PautaSpeci
 import br.com.cesarcastro.votacao.mappers.PautaMapper;
 import br.com.cesarcastro.votacao.support.exceptions.BusinessException;
 import br.com.cesarcastro.votacao.support.exceptions.RecursoNaoEncontradoException;
-import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
