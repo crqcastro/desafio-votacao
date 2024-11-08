@@ -153,3 +153,9 @@ O Versionamento da API segue o Versionamento Semântico. [SemVer](https://semver
 </a>
 <code><br/></code>
 <hr/>
+
+> [!TIP]
+> Se chegou até aqui, tenho mais uma ideia! existe um script que pode te ajudar a subir o todo em containers!. [Script](https://raw.githubusercontent.com/crqcastro/desafio-votacao/refs/heads/main/run.sh)
+> Basta executar o script e ele irá subir o projeto em containers docker, caso o docker esteja configurado.
+> Por padrão, deixo o docker configurado para ser executado com sudo, entao se for seu caso, execute o script e ele vai te pedir a senha do sudo.
+> Caso queira alterar, porque você adicionou seu usuario no grupo do docker, e nao precisa do sudo, edit e remove o sudo do script na linha 18
