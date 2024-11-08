@@ -131,27 +131,27 @@ O Versionamento da API segue o Versionamento Semântico. [SemVer](https://semver
 ## Contatos
 <hr/>
 <a target="_blank" href="https://www.linkedin.com/in/cesarrqcastro/">
-  <img align="left" alt="LinkdeIn" width="22px" src="https://cdn.jsdelivr.net/npm/simple-icons@v3/icons/linkedin.svg" />
+  <img align="left" alt="LinkdeIn" width="22px" src="https://cdn.simpleicons.org/linkedin/f04f05" />
 </a>
 <a target="_blank" href="https://api.whatsapp.com/send?phone=5598992007999">
-  <img align="left" alt="Whatsapp" width="22px" src="https://cdn.jsdelivr.net/npm/simple-icons@v3/icons/whatsapp.svg" />
+  <img align="left" alt="Whatsapp" width="22px" src="https://cdn.simpleicons.org/whatsapp/f04f05" />
 </a>
 <a target="_blank" href="https://dev.to/crqcastro/">
-  <img align="left" alt="Devto" width="22px" src="https://cdn.jsdelivr.net/npm/simple-icons@v3/icons/dev-dot-to.svg" />
+  <img align="left" alt="Devto" width="22px" src="https://cdn.simpleicons.org/devdotto/f04f05" />
 </a>
 <a target="_blank" href="mailto:cesarrqc@gmail.com">
-  <img align="left" alt="Gmail" width="22px" src="https://cdn.jsdelivr.net/npm/simple-icons@v3/icons/gmail.svg" />
+  <img align="left" alt="Gmail" width="22px" src="https://cdn.simpleicons.org/gmail/f04f05" />
 </a>
 <a target="_blank" href="https://cesarcastro.com.br">
-  <img align="left" alt="WebSite" width="22px" src="https://cdn.jsdelivr.net/npm/simple-icons@3.4.1/icons/internetexplorer.svg" />
+  <img align="left" alt="WebSite" width="22px" src="https://cdn.simpleicons.org/firefoxbrowser/f04f05" />
 </a>
 <a target="_blank" href="https://www.youracclaim.com/users/crqcastro/badges">
-  <img align="left" alt="WebSite" width="22px" src="https://cdn.jsdelivr.net/npm/simple-icons@3.4.1/icons/oracle.svg" />
+  <img align="left" alt="WebSite" width="22px" src="https://cdn.simpleicons.org/oracle/f04f05" />
 </a>
 <a target="_blank" href="https://github.com/crqcastro">
-  <img align="left" alt="github" width="22px" src="https://cdn.jsdelivr.net/npm/simple-icons@3.13.0/icons/github.svg" />
+  <img align="left" alt="github" width="22px" src="https://cdn.simpleicons.org/github/f04f05" />
 </a>
-<code><br/></code>
+<br/>
 <hr/>
 
 > [!TIP]
