@@ -20,8 +20,10 @@ public class AtualizadorPautasScheduler {
 
     @Scheduled(cron = "0 * * * * *")
     public void atualizaAberturaDePautas() {
-        log.info("INICIO - Atualizando abertura de pautas");
-        List<PautaEntity> pautas = pautaRepository.findByPautaAbertaFalseAndDataHoraInicioBetween(LocalDateTime.now());
+        LocalDateTime dataHoraRefencia = LocalDateTime.now();
+        log.info("INICIO - Atualizando abertura de pautas: {}",dataHoraRefencia);
+
+        List<PautaEntity> pautas = pautaRepository.findByPautaAbertaFalseAndDataHoraInicioBetween(dataHoraRefencia);
         pautas.forEach(pauta -> {
             log.info("Abrindo pauta {}", pauta.getId());
             pauta.setPautaAberta(true);
@@ -34,11 +36,12 @@ public class AtualizadorPautasScheduler {
 
     @Scheduled(cron = "0 * * * * *")
     public void atualizaEncerramentoDePautas() {
-        log.info("INICIO - Atualizando fechamento de pautas");
-        List<PautaEntity> pautas = pautaRepository.findByPautaAbertaTrueAndDataHoraFimBefore(LocalDateTime.now());
+        LocalDateTime dataHoraRefencia = LocalDateTime.now();
+        log.info("INICIO - Atualizando fechamento de pautas: {}", dataHoraRefencia);
+        List<PautaEntity> pautas = pautaRepository.findByPautaAbertaTrueAndDataHoraFimBefore(dataHoraRefencia);
         pautas.forEach(pauta -> {
             log.info("Encerrando pauta {}", pauta.getId());
-            pauta.setPautaAberta(true);
+            pauta.setPautaAberta(false);
             pautaRepository.save(pauta);
         });
         pautaRepository.saveAll(pautas);

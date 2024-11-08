@@ -12,9 +12,9 @@ import java.util.List;
 
 @Repository
 public interface PautaRepository extends JpaRepository<PautaEntity, Long>, JpaSpecificationExecutor<PautaEntity> {
-    @Query("SELECT p FROM PautaEntity p WHERE p.pautaAberta = false AND p.dataHoraInicio >= :dataHoraAtual AND p.dataHoraInicio <= :dataHoraAtual")
+    @Query("SELECT p FROM PautaEntity p WHERE p.pautaAberta = false AND p.dataHoraFim >= :dataHoraAtual AND p.dataHoraInicio <= :dataHoraAtual")
     List<PautaEntity> findByPautaAbertaFalseAndDataHoraInicioBetween(@Param("dataHoraAtual") LocalDateTime dataHoraAtual);
 
-    @Query("SELECT p FROM PautaEntity p WHERE p.pautaAberta = true AND p.dataHoraFim > :dataHoraAtual")
+    @Query("SELECT p FROM PautaEntity p WHERE p.pautaAberta = true AND p.dataHoraFim < :dataHoraAtual")
     List<PautaEntity> findByPautaAbertaTrueAndDataHoraFimBefore(@Param("dataHoraAtual") LocalDateTime dataHoraAtual);
 }
