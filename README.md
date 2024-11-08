@@ -38,7 +38,7 @@ A API permite gerenciar e realizar votações em assembleias de maneira eficient
 ## Serviços de terceiros
 - **jsonplaceholder** - API falsa e confiável gratuita para testes e prototipagem. [JSON PlaceHolder](https://jsonplaceholder.typicode.com/)
 
-## Instalação
+## Instalação - Local
 ### Pré-requisitos
 - Java 17
 - Maven
@@ -69,7 +69,7 @@ mvn clean install verify sonar:sonar -Dsonar.host.url=http://localhost:9000  -Ds
 > Caso queira usar outro servidor do sonarqube, altere a url no script acima
 
 - Suba as variáveis de ambientes necessárias para executar o projeto
-- ### Linux
+### Linux
 ```bash
 PROFILE="local"
 DIR=${1:-"./docs"}
