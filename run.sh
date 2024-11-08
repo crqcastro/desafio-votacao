@@ -15,7 +15,7 @@ export $(grep -v '^#' "$ENV_FILE" | xargs)
 echo "Variáveis de ambiente carregadas a partir do arquivo $ENV_FILE"
 
 
-mvn clean install verify sonar:sonar -Dsonar.login=sqa_229a877fa15fb0def8c6cf17dfa0c99a087037c8
+mvn clean install verify sonar:sonar -Dsonar.login=sqa_ea3d6e2738bed91b3f4a3b6a210cf48004ba7429
 cp ./target/votacao-*.jar ./target/votacao.jar
-docker compose up -d
+sudo docker compose up -d
 java -jar ./target/votacao.jar --spring.profiles.active=$PROFILE

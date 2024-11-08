@@ -52,6 +52,25 @@ services:
     ports:
       - "5441:5432"
 
+  votacao:
+    image: votacao:latest
+    build:
+      context: .
+      dockerfile: Dockerfile
+    depends_on:
+      - votacao_db
+    ports:
+      - "8083:8083"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:5441/db_votacao
+      SPRING_DATASOURCE_USERNAME: votacao
+      SPRING_DATASOURCE_PASSWORD: _Votacao
+      SPRING_PROFILES_ACTIVE: local
+      APP_ENDPOINT_BASE: http://localhost:8083
+      SPRING_JPA_DATABASE_PLATFORM: org.hibernate.dialect.PostgreSQLDialect
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+      USUARIO_API_URL: https://my-json-server:typicode:com/crqcastro/desafio-votacao
+
 volumes:
   sonarqube_data:
   sonarqube_temp:
