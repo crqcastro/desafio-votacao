@@ -2,8 +2,9 @@ package br.com.cesarcastro.votacao.annotations;
 
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
+
 import java.lang.reflect.Field;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 public class DateGreaterThanValidator implements ConstraintValidator<DateGreaterThan, Object> {
 
@@ -24,11 +25,11 @@ public class DateGreaterThanValidator implements ConstraintValidator<DateGreater
             startDateField.setAccessible(true);
             endDateField.setAccessible(true);
 
-            LocalDate startDate = (LocalDate) startDateField.get(value);
-            LocalDate endDate = (LocalDate) endDateField.get(value);
+            LocalDateTime startDate = (LocalDateTime) startDateField.get(value);
+            LocalDateTime endDate = (LocalDateTime) endDateField.get(value);
 
             if (startDate == null || endDate == null) {
-                return true; // Se uma das datas estiver ausente, não valida
+                return true;
             }
 
             return endDate.isAfter(startDate);

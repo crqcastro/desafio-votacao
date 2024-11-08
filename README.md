@@ -1,4 +1,6 @@
 # API de Votação
+[![Bugs](https://sonarcloud.io/api/project_badges/measure?project=crqcastro_desafio-votacao&metric=bugs)](https://sonarcloud.io/summary/new_code?id=crqcastro_desafio-votacao) [![Duplicated Lines (%)](https://sonarcloud.io/api/project_badges/measure?project=crqcastro_desafio-votacao&metric=duplicated_lines_density)](https://sonarcloud.io/summary/new_code?id=crqcastro_desafio-votacao)
+
 Esta API REST se destina a gerenciar votações de pautas em uma assembleia.
 A API permite gerenciar e realizar votações em assembleias de maneira eficiente e automatizada.
 
@@ -55,7 +57,7 @@ docker compose up -d
 - Gere um token de conexão para poder colocar o projeto no sonarqube. [Criar token de acesso](https://docs.sonarsource.com/sonarqube/9.9/user-guide/user-account/generating-and-using-tokens/)
 - Faça o build do projeto
 ```bash
-mvn clean install verify sonar:sonar -Dsonar.host.url=http://localhost:9000  -Dsonar.login=sqa_229a877fa15fb0def8c6cf17dfa0c99a087037c8
+mvn clean install verify sonar:sonar -Dsonar.host.url=http://localhost:9000  -Dsonar.login=5e2fe7187c818fffcef035c79cd51334f9002dd5
 ```
 > [!IMPORTANT]  
 > Substitua o token do script acima pelo token gerado no passo anterior

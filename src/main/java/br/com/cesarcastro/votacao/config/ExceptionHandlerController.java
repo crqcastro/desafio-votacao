@@ -8,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingRequestValueException;
@@ -49,6 +50,22 @@ public class ExceptionHandlerController {
         ErrorDto err = gerarError(request, NOT_FOUND, e.getMessage());
         return ResponseEntity.status(NOT_FOUND).contentType(APPLICATION_JSON).body(err);
     }
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<ErrorDto> tratarErroArgumentoInvalido(MethodArgumentNotValidException e, HttpServletRequest request) {
+        log.error("Dados invalidos.", e);
+        ErrorDto err = gerarError(request, BAD_REQUEST, "Dados invalidos.");
+
+        for (ObjectError error : e.getBindingResult().getAllErrors()) {
+            String errorKey = error.getObjectName();
+            String errorMessage = error.getDefaultMessage();
+            err.addViolation(errorKey, errorMessage);
+        }
+        List<FieldError> fieldErrorList = e.getBindingResult().getFieldErrors();
+        fieldErrorList.forEach(f -> err.addViolation(f.getField(), f.getDefaultMessage()));
+
+        return ResponseEntity.status(BAD_REQUEST).contentType(APPLICATION_JSON).body(err);
+    }
+
 
     /* ############################################ 5XX SERVER EXCEPTION ############################################ */
 
