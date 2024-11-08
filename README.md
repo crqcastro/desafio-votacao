@@ -120,5 +120,5 @@ java -jar ./target/votacao.jar --spring.profiles.active=local
 > Para consultar se o projeto subiu, verifique a rota de health. [Actuator Health](http://localhost:8083/actuator/health)
 
 ## Documentação
-- Postman: Importa a collection disponível dentro da pasta docs. [Collection](https://raw.githubusercontent.com/crqcastro/desafio-votacao/refs/heads/main/docs/votacao.postman_collection.json)
+- Postman: Importa a collection disponível dentro da pasta docs. [Collection](https://raw.githubusercontent.com/crqcastro/desafio-votacao/refs/heads/main/docs/Desafio-votacao.postman_collection.json)
 - OpenAPI: Acesse a documentação da API em [OpenAPI](http://localhost:8083/swagger-ui/index.html)
