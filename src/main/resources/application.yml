@@ -47,7 +47,7 @@ spring:
     hibernate:
       dialect: ${SPRING_JPA_DATABASE_PLATFORM}
       ddl-auto: ${SPRING_JPA_HIBERNATE_DDL_AUTO}
-    show-sql: true
+    show-sql: false
   datasource:
     username: ${SPRING_DATASOURCE_USERNAME}
     password: ${SPRING_DATASOURCE_PASSWORD}
@@ -58,3 +58,8 @@ spring:
       connectionTimeout: 30000
       maximumPoolSize: 20
       maxLifetime: 30000
+logging:
+  level:
+    root: error
+    org.springframework.web: error
+    br.com.cesarcastro.votacao: error

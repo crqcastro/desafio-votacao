@@ -1,22 +1,88 @@
 version: '3.8'
 services:
+
+  sonarqube:
+    image: sonarqube:community
+    hostname: sonarqube
+    container_name: sonarqube
+#    read_only: true
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      SONAR_JDBC_URL: jdbc:postgresql://db:5432/sonar
+      SONAR_JDBC_USERNAME: sonar
+      SONAR_JDBC_PASSWORD: sonar
+    volumes:
+      - sonarqube_data:/opt/sonarqube/data
+      - sonarqube_extensions:/opt/sonarqube/extensions
+      - sonarqube_logs:/opt/sonarqube/logs
+      - sonarqube_temp:/opt/sonarqube/temp
+    ports:
+      - "9000:9000"
+    networks:
+      - ${NETWORK_TYPE:-ipv4}
   db:
     image: postgres:15
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    hostname: postgresql
+    container_name: postgresql
+    environment:
+      POSTGRES_USER: sonar
+      POSTGRES_PASSWORD: sonar
+      POSTGRES_DB: sonar
     volumes:
-      - pg-data:/var/lib/postegresql/data
+      - postgresql:/var/lib/postgresql
+      - postgresql_data:/var/lib/postgresql/data
+    networks:
+      - ${NETWORK_TYPE:-ipv4}
+
+  votacao_db:
+    image: postgres:13
+    volumes:
+      - pg-data:/var/lib/postgresql/data
     environment:
       POSTGRES_USER: votacao
       POSTGRES_PASSWORD: _Votacao
       POSTGRES_DB: db_votacao
     ports:
       - "5441:5432"
-#  app:
+
+volumes:
+  sonarqube_data:
+  sonarqube_temp:
+  sonarqube_extensions:
+  sonarqube_logs:
+  postgresql:
+  postgresql_data:
+  pg-data:
+
+networks:
+  ipv4:
+    driver: bridge
+    enable_ipv6: false
+  dual:
+    driver: bridge
+    enable_ipv6: true
+    ipam:
+      config:
+        - subnet: "192.168.2.0/24"
+          gateway: "192.168.2.1"
+        - subnet: "2001:db8:2::/64"
+          gateway: "2001:db8:2::1"
+
+
+#  votacao:
 #    image: votacao:latest
 #    build:
 #      context: .
 #      dockerfile: Dockerfile
 #    depends_on:
-#      - db
+#      - votacao_db
 #    ports:
 #      - "8083:8083"
 #    environment:
@@ -26,5 +92,3 @@ services:
 #      SPRING_DATASOURCE_PASSWORD: _Votacao
 #      SPRING_PROFILES_ACTIVE: dev
 #      APP-ENDPOINT-BASE: http://localhost:8083
-volumes:
-  pg-data:

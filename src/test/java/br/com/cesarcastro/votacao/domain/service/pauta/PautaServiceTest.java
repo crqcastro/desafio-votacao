@@ -238,4 +238,50 @@ public class PautaServiceTest {
         verify(pautaRepository).findById(anyLong());
     }
 
+    @Test
+    public void deveEncerrarSessaoRecursoNaoEncontrado() {
+        when(pautaRepository.findById(1L)).thenReturn(Optional.empty());
+        assertThrows(RecursoNaoEncontradoException.class, () -> this.pautaService.encerrarSessao(1L),
+                "Pauta não encontrada");
+        verify(pautaRepository).findById(1L);
+    }
+
+    @Test
+    public void deveEncerrarSessaoComSucesso() {
+        PautaEntity pautaEntity = TestUtils.generateRandom(PautaEntity.class);
+        pautaEntity.setDataHoraInicio(LocalDateTime.now().plusDays(1));
+        pautaEntity.setDataHoraFim(LocalDateTime.now().plusDays(2));
+        pautaEntity.setPautaAberta(true);
+        when(pautaRepository.findById(1L)).thenReturn(Optional.of(pautaEntity));
+        when(pautaRepository.save(any())).thenAnswer(invocation -> invocation.getArgument(0));
+        PautaResponse pautaResponse = this.pautaService.encerrarSessao(1L);
+        verify(pautaRepository).save(any());
+        verify(pautaRepository).findById(1L);
+        assertEquals(false, pautaResponse.pautaAberta());
+    }
+    @Test
+    public void deveEncerrarSessaoSemSucessoPautaEncerradaDataHoraFim() {
+        PautaEntity pautaEntity = TestUtils.generateRandom(PautaEntity.class);
+        pautaEntity.setDataHoraInicio(LocalDateTime.now().minusDays(1));
+        pautaEntity.setDataHoraFim(LocalDateTime.now().minusMinutes(1));
+        pautaEntity.setPautaAberta(true);
+        when(pautaRepository.findById(1L)).thenReturn(Optional.of(pautaEntity));
+        assertThrows(BusinessException.class, () -> this.pautaService.encerrarSessao(1L),
+                "Pauta já encerrada");
+        verify(pautaRepository).findById(1L);
+    }
+
+    @Test
+    public void deveEncerrarSessaoSemSucessoPautaStatus() {
+        PautaEntity pautaEntity = TestUtils.generateRandom(PautaEntity.class);
+        pautaEntity.setDataHoraInicio(LocalDateTime.now().minusDays(1));
+        pautaEntity.setDataHoraFim(LocalDateTime.now().plusMinutes(1));
+        pautaEntity.setPautaAberta(false);
+        when(pautaRepository.findById(1L)).thenReturn(Optional.of(pautaEntity));
+        assertThrows(BusinessException.class, () -> this.pautaService.encerrarSessao(1L),
+                "Pauta já encerrada");
+        verify(pautaRepository).findById(1L);
+    }
+
+
 }
