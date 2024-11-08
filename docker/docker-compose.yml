@@ -55,7 +55,7 @@ services:
   votacao:
     image: votacao:latest
     build:
-      context: .
+      context: ..
       dockerfile: Dockerfile
     depends_on:
       - votacao_db
