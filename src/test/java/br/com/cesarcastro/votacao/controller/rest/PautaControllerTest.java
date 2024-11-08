@@ -122,7 +122,7 @@ class PautaControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(pautaRequest)))
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.message").value("Data de início da pauta não pode ser menor que a data atual"));
+                .andExpect(jsonPath("$.message").value("Dados invalidos."));
     }
 
     @Test
@@ -142,7 +142,7 @@ class PautaControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(pautaRequest)))
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.message").value("Data de fim da pauta não pode ser menor que a data de início"));
+                .andExpect(jsonPath("$.message").value("Dados invalidos."));
     }
 
     @Test

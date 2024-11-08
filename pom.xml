@@ -10,7 +10,7 @@
     </parent>
     <groupId>br.com.cesarcastro</groupId>
     <artifactId>votacao</artifactId>
-    <version>1.0.6</version>
+    <version>1.0.7</version>
     <name>votacao</name>
     <description>Desafio de votação do SICRED</description>
     <developers>
@@ -37,6 +37,9 @@
         <coverage.branch>0</coverage.branch>
         <jacoco.reportPath>${project.basedir}/../target/jacoco.exec</jacoco.reportPath>
         <jacoco.coverage.min>0.7</jacoco.coverage.min>
+        <sonar.coverage.jacoco.xmlReportPaths>
+            ${project.basedir}/../target/jacoco.xml
+        </sonar.coverage.jacoco.xmlReportPaths>
         <!-- SONAR -->
         <sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
         <sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>
@@ -73,6 +76,10 @@
         <jacoco-maven-plugin.version>0.8.8</jacoco-maven-plugin.version>
     </properties>
     <dependencies>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-validation</artifactId>
+        </dependency>
         <!-- SPRING - START -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -161,7 +168,39 @@
         </dependency>
         <!-- TEST - END -->
     </dependencies>
-
+    <profiles>
+        <profile>
+            <id>coverage</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.jacoco</groupId>
+                        <artifactId>jacoco-maven-plugin</artifactId>
+                        <version>0.8.7</version>
+                        <executions>
+                            <execution>
+                                <id>prepare-agent</id>
+                                <goals>
+                                    <goal>prepare-agent</goal>
+                                </goals>
+                            </execution>
+                            <execution>
+                                <id>report</id>
+                                <goals>
+                                    <goal>report</goal>
+                                </goals>
+                                <configuration>
+                                    <formats>
+                                        <format>XML</format>
+                                    </formats>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
     <build>
         <finalName>${project.name}</finalName>
         <plugins>
@@ -285,5 +324,6 @@
             </plugin>
         </plugins>
     </build>
+
 
 </project>

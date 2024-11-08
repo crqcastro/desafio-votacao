@@ -4,12 +4,14 @@ import br.com.cesarcastro.votacao.annotations.DateGreaterThan;
 import br.com.cesarcastro.votacao.annotations.FutureDate;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.validation.annotation.Validated;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -20,7 +22,7 @@ import static io.swagger.v3.oas.annotations.media.Schema.RequiredMode.REQUIRED;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@DateGreaterThan(startDateField = "dataHoraInicio", endDateField = "dataHoraFim")
+@DateGreaterThan(startDateField = "dataHoraInicio", endDateField = "dataHoraFim", message = "A dataHoraFim deve ser maior que dataHoraInicio")
 @Schema(description = "Requisição para criação de uma nova pauta.", name = "Pauta")
 public class PautaRequest {
     @Schema(description = "Nome da pauta.", requiredMode = REQUIRED)

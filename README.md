@@ -1,4 +1,6 @@
 # API de Votação
+[![Bugs](https://sonarcloud.io/api/project_badges/measure?project=crqcastro_desafio-votacao&metric=bugs)](https://sonarcloud.io/summary/new_code?id=crqcastro_desafio-votacao) [![Duplicated Lines (%)](https://sonarcloud.io/api/project_badges/measure?project=crqcastro_desafio-votacao&metric=duplicated_lines_density)](https://sonarcloud.io/summary/new_code?id=crqcastro_desafio-votacao)
+
 Esta API REST se destina a gerenciar votações de pautas em uma assembleia.
 A API permite gerenciar e realizar votações em assembleias de maneira eficiente e automatizada.
 
@@ -55,7 +57,7 @@ docker compose up -d
 - Gere um token de conexão para poder colocar o projeto no sonarqube. [Criar token de acesso](https://docs.sonarsource.com/sonarqube/9.9/user-guide/user-account/generating-and-using-tokens/)
 - Faça o build do projeto
 ```bash
-mvn clean install verify sonar:sonar -Dsonar.host.url=http://localhost:9000  -Dsonar.login=sqa_229a877fa15fb0def8c6cf17dfa0c99a087037c8
+mvn clean install verify sonar:sonar -Dsonar.host.url=http://localhost:9000  -Dsonar.login=5e2fe7187c818fffcef035c79cd51334f9002dd5
 ```
 > [!IMPORTANT]  
 > Substitua o token do script acima pelo token gerado no passo anterior
@@ -122,3 +124,38 @@ java -jar ./target/votacao.jar --spring.profiles.active=local
 ## Documentação
 - Postman: Importa a collection disponível dentro da pasta docs. [Collection](https://raw.githubusercontent.com/crqcastro/desafio-votacao/refs/heads/main/docs/Desafio-votacao.postman_collection.json)
 - OpenAPI: Acesse a documentação da API em [OpenAPI](http://localhost:8083/swagger-ui/index.html)
+
+## Versionamento
+O Versionamento da API segue o Versionamento Semântico. [SemVer](https://semver.org/)
+
+## Contatos
+<hr/>
+<a target="_blank" href="https://www.linkedin.com/in/cesarrqcastro/">
+  <img align="left" alt="LinkdeIn" width="22px" src="https://cdn.jsdelivr.net/npm/simple-icons@v3/icons/linkedin.svg" />
+</a>
+<a target="_blank" href="https://api.whatsapp.com/send?phone=5598992007999">
+  <img align="left" alt="Whatsapp" width="22px" src="https://cdn.jsdelivr.net/npm/simple-icons@v3/icons/whatsapp.svg" />
+</a>
+<a target="_blank" href="https://dev.to/crqcastro/">
+  <img align="left" alt="Devto" width="22px" src="https://cdn.jsdelivr.net/npm/simple-icons@v3/icons/dev-dot-to.svg" />
+</a>
+<a target="_blank" href="mailto:cesarrqc@gmail.com">
+  <img align="left" alt="Gmail" width="22px" src="https://cdn.jsdelivr.net/npm/simple-icons@v3/icons/gmail.svg" />
+</a>
+<a target="_blank" href="https://cesarcastro.com.br">
+  <img align="left" alt="WebSite" width="22px" src="https://cdn.jsdelivr.net/npm/simple-icons@3.4.1/icons/internetexplorer.svg" />
+</a>
+<a target="_blank" href="https://www.youracclaim.com/users/crqcastro/badges">
+  <img align="left" alt="WebSite" width="22px" src="https://cdn.jsdelivr.net/npm/simple-icons@3.4.1/icons/oracle.svg" />
+</a>
+<a target="_blank" href="https://github.com/crqcastro">
+  <img align="left" alt="github" width="22px" src="https://cdn.jsdelivr.net/npm/simple-icons@3.13.0/icons/github.svg" />
+</a>
+<code><br/></code>
+<hr/>
+
+> [!TIP]
+> Se chegou até aqui, tenho mais uma ideia! existe um script que pode te ajudar a subir o todo em containers!. [Script](https://raw.githubusercontent.com/crqcastro/desafio-votacao/refs/heads/main/run.sh)
+> Basta executar o script e ele irá subir o projeto em containers docker, caso o docker esteja configurado.
+> Por padrão, deixo o docker configurado para ser executado com sudo, entao se for seu caso, execute o script e ele vai te pedir a senha do sudo.
+> Caso queira alterar, porque você adicionou seu usuario no grupo do docker, e nao precisa do sudo, edit e remove o sudo do script na linha 18

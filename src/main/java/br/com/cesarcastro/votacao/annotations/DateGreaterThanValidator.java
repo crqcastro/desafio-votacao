@@ -2,9 +2,12 @@ package br.com.cesarcastro.votacao.annotations;
 
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
-import java.lang.reflect.Field;
-import java.time.LocalDate;
+import lombok.extern.slf4j.Slf4j;
 
+import java.lang.reflect.Field;
+import java.time.LocalDateTime;
+
+@Slf4j
 public class DateGreaterThanValidator implements ConstraintValidator<DateGreaterThan, Object> {
 
     private String startDateField;
@@ -24,16 +27,16 @@ public class DateGreaterThanValidator implements ConstraintValidator<DateGreater
             startDateField.setAccessible(true);
             endDateField.setAccessible(true);
 
-            LocalDate startDate = (LocalDate) startDateField.get(value);
-            LocalDate endDate = (LocalDate) endDateField.get(value);
+            LocalDateTime startDate = (LocalDateTime) startDateField.get(value);
+            LocalDateTime endDate = (LocalDateTime) endDateField.get(value);
 
             if (startDate == null || endDate == null) {
-                return true; // Se uma das datas estiver ausente, não valida
+                return true;
             }
 
             return endDate.isAfter(startDate);
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("Erro ao validar a data: {}", e.getMessage());
             return false;
         }
     }
