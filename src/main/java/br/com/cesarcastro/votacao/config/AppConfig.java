@@ -8,7 +8,7 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class AppConfig {
     @Bean
-    public ObjectMapper om(){
+    public ObjectMapper om() {
         ObjectMapper om = new ObjectMapper();
         om.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
         om.findAndRegisterModules();

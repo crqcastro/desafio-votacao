@@ -18,12 +18,13 @@ public class TestUtils {
     public static <T> T generateRandom(Class<T> clazz) {
         return generateRandom(clazz, null);
     }
+
     public static <T> T generateRandom(Class<T> clazz, Integer listSize) {
         Randomizer<Integer> idIntegerRandomizer = new IntegerRangeRandomizer(1, 100);
         Randomizer<Long> idLongRandomizer = new LongRangeRandomizer(1L, 100L);
 
         EasyRandomParameters parameters = new EasyRandomParameters();
-        parameters.collectionSizeRange(Objects.isNull(listSize)?MIN_LIST_SIZE:listSize, Objects.isNull(listSize)?MAX_LIST_SIZE:listSize);
+        parameters.collectionSizeRange(Objects.isNull(listSize) ? MIN_LIST_SIZE : listSize, Objects.isNull(listSize) ? MAX_LIST_SIZE : listSize);
         parameters.randomize(
                 field -> field.getName().toLowerCase().contains("id") && field.getType().equals(Integer.class),
                 idIntegerRandomizer

@@ -1,290 +1,290 @@
 {
-	"info": {
-		"_postman_id": "ea19ebab-dfe5-49da-add3-82cb7a4b7744",
-		"name": "Desafio-votacao",
-		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "4319305"
-	},
-	"item": [
-		{
-			"name": "Criar nova pauta",
-			"request": {
-				"method": "POST",
-				"header": [
-					{
-						"key": "Content-Type",
-						"value": "application/json"
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": "{\r\n  \"nome\": \"Votação de teste 5\",\r\n  \"descricao\": \"Votação criada durante os testes\",\r\n  \"dataHoraInicio\": \"2024-11-07T22:51:01.382Z\",\r\n  \"dataHoraFim\": \"2024-11-09T23:59:59.382Z\"\r\n}",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
-				"url": {
-					"raw": "http://localhost:8083/v1/pauta",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "8083",
-					"path": [
-						"v1",
-						"pauta"
-					]
-				},
-				"description": "Generated from cURL: curl -L 'http://localhost:8083/v1/pauta' \\\r\n-H 'Content-Type: application/json' \\\r\n-d '{\r\n  \"nome\": \"Votação de teste\",\r\n  \"descricao\": \"Votação criada durante os testes\",\r\n  \"dataHoraInicio\": \"2024-11-09T00:00:01.382Z\",\r\n  \"dataHoraFim\": \"2024-11-09T23:59:59.382Z\"\r\n}'\r\n\r\n\r\ncurl -L 'http://localhost:8083/v1/pauta/10'\r\n\r\ncurl -L 'http://localhost:8083/v1/pauta?dataHoraInicio=2024-11-09T00%3A00%3A01.382Z&pautaAberta=false&dataHoraFim=2024-11-09T23%3A59%3A59.382Z&dataInicio=2024-11-07&dataFim=2024-11-09&id=1&paginaAtual=0&itensPorPagina=30&orderBy=id&direction=desc'"
-			},
-			"response": []
-		},
-		{
-			"name": "Obter pauta por id",
-			"request": {
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "http://localhost:8083/v1/pauta/:id",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "8083",
-					"path": [
-						"v1",
-						"pauta",
-						":id"
-					],
-					"variable": [
-						{
-							"key": "id",
-							"value": "1"
-						}
-					]
-				},
-				"description": "Generated from cURL: curl -L 'http://localhost:8083/v1/pauta/10'"
-			},
-			"response": []
-		},
-		{
-			"name": "Listar votações - Paginado",
-			"request": {
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "http://localhost:8083/v1/pauta?paginaAtual=0&itensPorPagina=30&orderBy=id&direction=desc",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "8083",
-					"path": [
-						"v1",
-						"pauta"
-					],
-					"query": [
-						{
-							"key": "dataHoraInicio",
-							"value": "2024-11-09T00%3A00%3A01.382Z",
-							"disabled": true
-						},
-						{
-							"key": "pautaAberta",
-							"value": "false",
-							"disabled": true
-						},
-						{
-							"key": "dataHoraFim",
-							"value": "2024-11-09T23%3A59%3A59.382Z",
-							"disabled": true
-						},
-						{
-							"key": "dataInicio",
-							"value": "2024-11-07",
-							"disabled": true
-						},
-						{
-							"key": "dataFim",
-							"value": "2024-11-09",
-							"disabled": true
-						},
-						{
-							"key": "id",
-							"value": "1",
-							"disabled": true
-						},
-						{
-							"key": "paginaAtual",
-							"value": "0"
-						},
-						{
-							"key": "itensPorPagina",
-							"value": "30"
-						},
-						{
-							"key": "orderBy",
-							"value": "id"
-						},
-						{
-							"key": "direction",
-							"value": "desc"
-						}
-					]
-				},
-				"description": "Generated from cURL: \r\ncurl -L 'http://localhost:8083/v1/pauta?dataHoraInicio=2024-11-09T00%3A00%3A01.382Z&pautaAberta=false&dataHoraFim=2024-11-09T23%3A59%3A59.382Z&dataInicio=2024-11-07&dataFim=2024-11-09&id=1&paginaAtual=0&itensPorPagina=30&orderBy=id&direction=desc'"
-			},
-			"response": []
-		},
-		{
-			"name": "Abrir sessao",
-			"request": {
-				"method": "PATCH",
-				"header": [],
-				"url": {
-					"raw": "http://localhost:8083/v1/pauta/:id/abrir-sessao?minutos=120",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "8083",
-					"path": [
-						"v1",
-						"pauta",
-						":id",
-						"abrir-sessao"
-					],
-					"query": [
-						{
-							"key": "minutos",
-							"value": "120"
-						}
-					],
-					"variable": [
-						{
-							"key": "id",
-							"value": "5"
-						}
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Encerrar Sessao",
-			"request": {
-				"method": "PATCH",
-				"header": [],
-				"url": {
-					"raw": "http://localhost:8083/v1/pauta/:id/encerrar-sessao",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "8083",
-					"path": [
-						"v1",
-						"pauta",
-						":id",
-						"encerrar-sessao"
-					],
-					"variable": [
-						{
-							"key": "id",
-							"value": "5"
-						}
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Votar",
-			"request": {
-				"method": "PATCH",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n    \"id\": 5,\n    \"cpf\": \"93868910000\",\n    \"voto\": false \n}",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
-				"url": {
-					"raw": "http://localhost:8083/v1/pauta/votar",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "8083",
-					"path": [
-						"v1",
-						"pauta",
-						"votar"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Contabilizar",
-			"request": {
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "http://localhost:8083/v1/pauta/:id/contabilizar",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "8083",
-					"path": [
-						"v1",
-						"pauta",
-						":id",
-						"contabilizar"
-					],
-					"variable": [
-						{
-							"key": "id",
-							"value": "5"
-						}
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Consulta Usuario API Externa",
-			"request": {
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "https://my-json-server.typicode.com/crqcastro/desafio-votacao/user?cpf=14928546032",
-					"protocol": "https",
-					"host": [
-						"my-json-server",
-						"typicode",
-						"com"
-					],
-					"path": [
-						"crqcastro",
-						"desafio-votacao",
-						"user"
-					],
-					"query": [
-						{
-							"key": "cpf",
-							"value": "14928546032"
-						}
-					]
-				}
-			},
-			"response": []
-		}
-	]
+  "info": {
+    "_postman_id": "ea19ebab-dfe5-49da-add3-82cb7a4b7744",
+    "name": "Desafio-votacao",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "4319305"
+  },
+  "item": [
+    {
+      "name": "Criar nova pauta",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"nome\": \"Votação de teste 5\",\r\n  \"descricao\": \"Votação criada durante os testes\",\r\n  \"dataHoraInicio\": \"2024-11-07T22:51:01.382Z\",\r\n  \"dataHoraFim\": \"2024-11-09T23:59:59.382Z\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:8083/v1/pauta",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8083",
+          "path": [
+            "v1",
+            "pauta"
+          ]
+        },
+        "description": "Generated from cURL: curl -L 'http://localhost:8083/v1/pauta' \\\r\n-H 'Content-Type: application/json' \\\r\n-d '{\r\n  \"nome\": \"Votação de teste\",\r\n  \"descricao\": \"Votação criada durante os testes\",\r\n  \"dataHoraInicio\": \"2024-11-09T00:00:01.382Z\",\r\n  \"dataHoraFim\": \"2024-11-09T23:59:59.382Z\"\r\n}'\r\n\r\n\r\ncurl -L 'http://localhost:8083/v1/pauta/10'\r\n\r\ncurl -L 'http://localhost:8083/v1/pauta?dataHoraInicio=2024-11-09T00%3A00%3A01.382Z&pautaAberta=false&dataHoraFim=2024-11-09T23%3A59%3A59.382Z&dataInicio=2024-11-07&dataFim=2024-11-09&id=1&paginaAtual=0&itensPorPagina=30&orderBy=id&direction=desc'"
+      },
+      "response": []
+    },
+    {
+      "name": "Obter pauta por id",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8083/v1/pauta/:id",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8083",
+          "path": [
+            "v1",
+            "pauta",
+            ":id"
+          ],
+          "variable": [
+            {
+              "key": "id",
+              "value": "1"
+            }
+          ]
+        },
+        "description": "Generated from cURL: curl -L 'http://localhost:8083/v1/pauta/10'"
+      },
+      "response": []
+    },
+    {
+      "name": "Listar votações - Paginado",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8083/v1/pauta?paginaAtual=0&itensPorPagina=30&orderBy=id&direction=desc",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8083",
+          "path": [
+            "v1",
+            "pauta"
+          ],
+          "query": [
+            {
+              "key": "dataHoraInicio",
+              "value": "2024-11-09T00%3A00%3A01.382Z",
+              "disabled": true
+            },
+            {
+              "key": "pautaAberta",
+              "value": "false",
+              "disabled": true
+            },
+            {
+              "key": "dataHoraFim",
+              "value": "2024-11-09T23%3A59%3A59.382Z",
+              "disabled": true
+            },
+            {
+              "key": "dataInicio",
+              "value": "2024-11-07",
+              "disabled": true
+            },
+            {
+              "key": "dataFim",
+              "value": "2024-11-09",
+              "disabled": true
+            },
+            {
+              "key": "id",
+              "value": "1",
+              "disabled": true
+            },
+            {
+              "key": "paginaAtual",
+              "value": "0"
+            },
+            {
+              "key": "itensPorPagina",
+              "value": "30"
+            },
+            {
+              "key": "orderBy",
+              "value": "id"
+            },
+            {
+              "key": "direction",
+              "value": "desc"
+            }
+          ]
+        },
+        "description": "Generated from cURL: \r\ncurl -L 'http://localhost:8083/v1/pauta?dataHoraInicio=2024-11-09T00%3A00%3A01.382Z&pautaAberta=false&dataHoraFim=2024-11-09T23%3A59%3A59.382Z&dataInicio=2024-11-07&dataFim=2024-11-09&id=1&paginaAtual=0&itensPorPagina=30&orderBy=id&direction=desc'"
+      },
+      "response": []
+    },
+    {
+      "name": "Abrir sessao",
+      "request": {
+        "method": "PATCH",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8083/v1/pauta/:id/abrir-sessao?minutos=120",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8083",
+          "path": [
+            "v1",
+            "pauta",
+            ":id",
+            "abrir-sessao"
+          ],
+          "query": [
+            {
+              "key": "minutos",
+              "value": "120"
+            }
+          ],
+          "variable": [
+            {
+              "key": "id",
+              "value": "5"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Encerrar Sessao",
+      "request": {
+        "method": "PATCH",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8083/v1/pauta/:id/encerrar-sessao",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8083",
+          "path": [
+            "v1",
+            "pauta",
+            ":id",
+            "encerrar-sessao"
+          ],
+          "variable": [
+            {
+              "key": "id",
+              "value": "5"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Votar",
+      "request": {
+        "method": "PATCH",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n    \"id\": 5,\n    \"cpf\": \"93868910000\",\n    \"voto\": false \n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:8083/v1/pauta/votar",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8083",
+          "path": [
+            "v1",
+            "pauta",
+            "votar"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Contabilizar",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8083/v1/pauta/:id/contabilizar",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8083",
+          "path": [
+            "v1",
+            "pauta",
+            ":id",
+            "contabilizar"
+          ],
+          "variable": [
+            {
+              "key": "id",
+              "value": "5"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Consulta Usuario API Externa",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "https://my-json-server.typicode.com/crqcastro/desafio-votacao/user?cpf=14928546032",
+          "protocol": "https",
+          "host": [
+            "my-json-server",
+            "typicode",
+            "com"
+          ],
+          "path": [
+            "crqcastro",
+            "desafio-votacao",
+            "user"
+          ],
+          "query": [
+            {
+              "key": "cpf",
+              "value": "14928546032"
+            }
+          ]
+        }
+      },
+      "response": []
+    }
+  ]
 }

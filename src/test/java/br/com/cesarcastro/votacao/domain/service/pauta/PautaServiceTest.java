@@ -1,7 +1,6 @@
 package br.com.cesarcastro.votacao.domain.service.pauta;
 
 import br.com.cesarcastro.votacao.domain.client.UsuarioClient;
-import br.com.cesarcastro.votacao.domain.model.clients.in.StatusEnum;
 import br.com.cesarcastro.votacao.domain.model.clients.in.Usuario;
 import br.com.cesarcastro.votacao.domain.model.entities.PautaEntity;
 import br.com.cesarcastro.votacao.domain.model.filtros.PautaFiltro;
@@ -38,7 +37,7 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-public class PautaServiceTest {
+class PautaServiceTest {
     @Mock
     private PautaRepository pautaRepository;
     @Mock
@@ -49,14 +48,14 @@ public class PautaServiceTest {
     private UsuarioClient usuarioClient;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         MockitoAnnotations.openMocks(this);
         this.mapper = PautaMapper.INSTANCE;
         this.pautaService = new PautaService(pautaRepository, votoRepository, mapper, usuarioClient);
     }
 
     @Test
-    public void testCadastrarPauta() {
+    void testCadastrarPauta() {
         LocalDateTime dataHoraInicio = LocalDateTime.now().plusDays(1);
         LocalDateTime dataHoraFim = LocalDateTime.now().plusDays(2);
         PautaRequest pautaRequest = TestUtils.generateRandom(PautaRequest.class);
@@ -65,13 +64,12 @@ public class PautaServiceTest {
         PautaEntity pautaEntity = this.mapper.toPautaEntity(pautaRequest);
         pautaEntity.setId(1L);
         when(pautaRepository.save(any())).thenAnswer(invocation -> invocation.getArgument(0));
-        PautaResponse pautaResponse = this.pautaService.cadastrarPauta(pautaRequest);
-
+        this.pautaService.cadastrarPauta(pautaRequest);
         verify(pautaRepository).save(any());
     }
 
     @Test
-    public void deveLancarBusinessExceptionQuandoDataHoraInicioForMenorQueDataAtual() {
+    void deveLancarBusinessExceptionQuandoDataHoraInicioForMenorQueDataAtual() {
         PautaRequest pautaRequest = TestUtils.generateRandom(PautaRequest.class);
         pautaRequest.setDataHoraInicio(LocalDateTime.now().minusDays(1));
         assertThrows(BusinessException.class, () -> this.pautaService.cadastrarPauta(pautaRequest)
@@ -79,7 +77,7 @@ public class PautaServiceTest {
     }
 
     @Test
-    public void deveLancarBusinessExceptionQuandoDataHoraInicioForMaiorQueAFInal() {
+    void deveLancarBusinessExceptionQuandoDataHoraInicioForMaiorQueAFInal() {
         PautaRequest pautaRequest = TestUtils.generateRandom(PautaRequest.class);
         pautaRequest.setDataHoraInicio(LocalDateTime.now());
         pautaRequest.setDataHoraFim(LocalDateTime.now().minusHours(1));
@@ -88,7 +86,7 @@ public class PautaServiceTest {
     }
 
     @Test
-    public void deveConsultarPautaPorId() {
+    void deveConsultarPautaPorId() {
         PautaEntity pautaEntity = TestUtils.generateRandom(PautaEntity.class);
         pautaEntity.setId(1L);
         when(pautaRepository.findById(1L)).thenReturn(Optional.of(pautaEntity));
@@ -98,14 +96,14 @@ public class PautaServiceTest {
     }
 
     @Test
-    public void deveConsultarPautaPorIdLancandoRecursoNaoEncontrado() {
+    void deveConsultarPautaPorIdLancandoRecursoNaoEncontrado() {
         when(pautaRepository.findById(1L)).thenReturn(Optional.empty());
         assertThrows(RecursoNaoEncontradoException.class, () -> this.pautaService.consultarPautaPorId(1L));
         verify(pautaRepository).findById(1L);
     }
 
     @Test
-    public void deveListarPautas() {
+    void deveListarPautas() {
         when(pautaRepository.findAll(any(Specification.class), (Pageable) any(Pageable.class))).thenReturn(Page.empty());
         PageRequest pageRequest = PageRequest.of(0, 10);
         Page<PautaResponse> listar = pautaService.listar(PautaFiltro.builder().pageRequest(pageRequest).build());
@@ -114,7 +112,7 @@ public class PautaServiceTest {
     }
 
     @Test
-    public void deveAbrirSessaoComSucesso() {
+    void deveAbrirSessaoComSucesso() {
         PautaEntity pautaEntity = TestUtils.generateRandom(PautaEntity.class);
         pautaEntity.setDataHoraInicio(LocalDateTime.now().plusDays(1));
         pautaEntity.setDataHoraFim(LocalDateTime.now().plusDays(2));
@@ -128,7 +126,7 @@ public class PautaServiceTest {
     }
 
     @Test
-    public void deveAbrirSessaoRecursoNaoEncontrado() {
+    void deveAbrirSessaoRecursoNaoEncontrado() {
         when(pautaRepository.findById(1L)).thenReturn(Optional.empty());
         assertThrows(RecursoNaoEncontradoException.class, () -> this.pautaService.abrirSessao(1L, 1),
                 "Pauta não encontrada");
@@ -136,7 +134,7 @@ public class PautaServiceTest {
     }
 
     @Test
-    public void deveAbrirSessaoBusinessExceptionPautaEncerrada() {
+    void deveAbrirSessaoBusinessExceptionPautaEncerrada() {
         PautaEntity pautaEntity = TestUtils.generateRandom(PautaEntity.class);
         pautaEntity.setDataHoraInicio(LocalDateTime.now().minusMinutes(2));
         pautaEntity.setDataHoraFim(LocalDateTime.now().minusMinutes(1));
@@ -149,7 +147,7 @@ public class PautaServiceTest {
     }
 
     @Test
-    public void deveAbrirSessaoBusinessExceptionPautaJaAberta() {
+    void deveAbrirSessaoBusinessExceptionPautaJaAberta() {
         PautaEntity pautaEntity = TestUtils.generateRandom(PautaEntity.class);
         pautaEntity.setDataHoraInicio(LocalDateTime.now().minusMinutes(2));
         pautaEntity.setDataHoraFim(LocalDateTime.now().plusMinutes(1));
@@ -162,7 +160,7 @@ public class PautaServiceTest {
     }
 
     @Test
-    public void deveVotarComSucesso(){
+    void deveVotarComSucesso() {
         Usuario usuario = TestUtils.generateRandom(Usuario.class);
         usuario.setHabilitado(ABLE_TO_VOTE);
         when(usuarioClient.buscarUsuarioPorCpf(anyString())).thenReturn(usuario);
@@ -177,7 +175,7 @@ public class PautaServiceTest {
     }
 
     @Test
-    public void deveVotarSemSucessoUsuarioInexistente(){
+    void deveVotarSemSucessoUsuarioInexistente() {
         when(usuarioClient.buscarUsuarioPorCpf(anyString())).thenThrow(new RecursoNaoEncontradoException("Recurso não encontrado"));
         assertThrows(RecursoNaoEncontradoException.class, () -> this.pautaService.votar(TestUtils.generateRandom(VotoRequest.class)),
                 "Recurso não encontrado");
@@ -185,7 +183,7 @@ public class PautaServiceTest {
     }
 
     @Test
-    public void deveVotarSemSucessoPautaNaoEncontrada(){
+    void deveVotarSemSucessoPautaNaoEncontrada() {
         Usuario usuario = TestUtils.generateRandom(Usuario.class);
         usuario.setHabilitado(ABLE_TO_VOTE);
         when(usuarioClient.buscarUsuarioPorCpf(anyString())).thenReturn(usuario);
@@ -195,8 +193,9 @@ public class PautaServiceTest {
         verify(usuarioClient).buscarUsuarioPorCpf(anyString());
         verify(pautaRepository).findById(anyLong());
     }
+
     @Test
-    public void deveVotarSemSucessoVotoInvalido(){
+    void deveVotarSemSucessoVotoInvalido() {
         Usuario usuario = TestUtils.generateRandom(Usuario.class);
         usuario.setHabilitado(ABLE_TO_VOTE);
         when(usuarioClient.buscarUsuarioPorCpf(anyString())).thenReturn(usuario);
@@ -210,8 +209,9 @@ public class PautaServiceTest {
         verify(pautaRepository).findById(anyLong());
         verify(votoRepository).existsByCpfAndPautaId(anyString(), anyLong());
     }
+
     @Test
-    public void deveVotarSemSucessoVotoInvalidoUsuarioNaoHabilitado(){
+    void deveVotarSemSucessoVotoInvalidoUsuarioNaoHabilitado() {
         Usuario usuario = TestUtils.generateRandom(Usuario.class);
         usuario.setHabilitado(UNABLE_TO_VOTE);
         when(usuarioClient.buscarUsuarioPorCpf(anyString())).thenReturn(usuario);
@@ -225,7 +225,7 @@ public class PautaServiceTest {
     }
 
     @Test
-    public void deveVotarSemSucessoPautaEncerrada(){
+    void deveVotarSemSucessoPautaEncerrada() {
         Usuario usuario = TestUtils.generateRandom(Usuario.class);
         usuario.setHabilitado(ABLE_TO_VOTE);
         when(usuarioClient.buscarUsuarioPorCpf(anyString())).thenReturn(usuario);
@@ -239,7 +239,7 @@ public class PautaServiceTest {
     }
 
     @Test
-    public void deveEncerrarSessaoRecursoNaoEncontrado() {
+    void deveEncerrarSessaoRecursoNaoEncontrado() {
         when(pautaRepository.findById(1L)).thenReturn(Optional.empty());
         assertThrows(RecursoNaoEncontradoException.class, () -> this.pautaService.encerrarSessao(1L),
                 "Pauta não encontrada");
@@ -247,7 +247,7 @@ public class PautaServiceTest {
     }
 
     @Test
-    public void deveEncerrarSessaoComSucesso() {
+    void deveEncerrarSessaoComSucesso() {
         PautaEntity pautaEntity = TestUtils.generateRandom(PautaEntity.class);
         pautaEntity.setDataHoraInicio(LocalDateTime.now().plusDays(1));
         pautaEntity.setDataHoraFim(LocalDateTime.now().plusDays(2));
@@ -259,8 +259,9 @@ public class PautaServiceTest {
         verify(pautaRepository).findById(1L);
         assertEquals(false, pautaResponse.pautaAberta());
     }
+
     @Test
-    public void deveEncerrarSessaoSemSucessoPautaEncerradaDataHoraFim() {
+    void deveEncerrarSessaoSemSucessoPautaEncerradaDataHoraFim() {
         PautaEntity pautaEntity = TestUtils.generateRandom(PautaEntity.class);
         pautaEntity.setDataHoraInicio(LocalDateTime.now().minusDays(1));
         pautaEntity.setDataHoraFim(LocalDateTime.now().minusMinutes(1));
@@ -272,7 +273,7 @@ public class PautaServiceTest {
     }
 
     @Test
-    public void deveEncerrarSessaoSemSucessoPautaStatus() {
+    void deveEncerrarSessaoSemSucessoPautaStatus() {
         PautaEntity pautaEntity = TestUtils.generateRandom(PautaEntity.class);
         pautaEntity.setDataHoraInicio(LocalDateTime.now().minusDays(1));
         pautaEntity.setDataHoraFim(LocalDateTime.now().plusMinutes(1));

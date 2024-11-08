@@ -11,6 +11,7 @@ public class PautaSpecification {
         return (root, query, criteriaBuilder) ->
                 nome == null ? null : criteriaBuilder.like(criteriaBuilder.lower(root.get("nome")), "%" + nome.toLowerCase() + "%");
     }
+
     public static Specification<PautaEntity> idEqual(Long id) {
         return (root, query, criteriaBuilder) ->
                 id == null ? null : criteriaBuilder.equal(root.get("id"), id);

@@ -21,7 +21,7 @@ public class AtualizadorPautasScheduler {
     @Scheduled(cron = "0 * * * * *")
     public void atualizaAberturaDePautas() {
         LocalDateTime dataHoraRefencia = LocalDateTime.now();
-        log.info("INICIO - Atualizando abertura de pautas: {}",dataHoraRefencia);
+        log.info("INICIO - Atualizando abertura de pautas: {}", dataHoraRefencia);
 
         List<PautaEntity> pautas = pautaRepository.findByPautaAbertaFalseAndDataHoraInicioBetween(dataHoraRefencia);
         pautas.forEach(pauta -> {

@@ -5,7 +5,7 @@ services:
     image: sonarqube:community
     hostname: sonarqube
     container_name: sonarqube
-#    read_only: true
+    #    read_only: true
     depends_on:
       db:
         condition: service_healthy
@@ -25,7 +25,7 @@ services:
   db:
     image: postgres:15
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready"]
+      test: [ "CMD-SHELL", "pg_isready" ]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -93,21 +93,3 @@ networks:
           gateway: "192.168.2.1"
         - subnet: "2001:db8:2::/64"
           gateway: "2001:db8:2::1"
-
-
-#  votacao:
-#    image: votacao:latest
-#    build:
-#      context: .
-#      dockerfile: Dockerfile
-#    depends_on:
-#      - votacao_db
-#    ports:
-#      - "8083:8083"
-#    environment:
-#      SPRING_DATASOURCE_URL: r2dbc:postgresql://localhost:5441/db_votacao
-#      SPRING_DATASOURCE_FLYAWAY_URL: jdbc:postgresql://localhost:5441/db_votacao
-#      SPRING_DATASOURCE_USERNAME: votacao
-#      SPRING_DATASOURCE_PASSWORD: _Votacao
-#      SPRING_PROFILES_ACTIVE: dev
-#      APP-ENDPOINT-BASE: http://localhost:8083

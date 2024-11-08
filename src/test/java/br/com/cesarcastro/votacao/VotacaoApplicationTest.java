@@ -8,7 +8,7 @@ import org.springframework.test.context.ActiveProfiles;
 
 @SpringBootTest
 @ActiveProfiles("test")
-class VotacaoApplicationTests {
+class VotacaoApplicationTest {
 
     @BeforeAll
     static void setup() {
@@ -25,7 +25,7 @@ class VotacaoApplicationTests {
     }
 
     @Test
-    void contextLoads() {
+    void contextLoads() { // Noncompliant - method is empty
     }
 
 }

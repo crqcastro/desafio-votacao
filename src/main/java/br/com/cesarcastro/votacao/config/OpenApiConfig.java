@@ -19,7 +19,6 @@ import java.util.List;
 @Configuration
 public class OpenApiConfig {
     private final String appName;
-    private final String artifactId;
     private final String appVersion;
     private final String description;
     private final Environment env;
@@ -29,7 +28,6 @@ public class OpenApiConfig {
     public OpenApiConfig(@Value("${info.app.name}") String appName,
                          @Value("${info.app.version}") String appVersion,
                          @Value("${info.app.description}") String description,
-                         @Value("${info.app.artifactId}") String artifactId,
                          Environment env,
                          @Value("${APP_ENDPOINT_BASE}") String appEndpointBase,
                          @Value("${server.port}") Integer port) {
@@ -39,7 +37,6 @@ public class OpenApiConfig {
         this.env = env;
         this.appEndpointBase = appEndpointBase;
         this.port = port;
-        this.artifactId = artifactId;
     }
 
 

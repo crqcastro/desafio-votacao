@@ -24,6 +24,14 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
+import static br.com.cesarcastro.votacao.support.MessagesConstants.DATA_INICIO_MAIOR_QUE_FIM;
+import static br.com.cesarcastro.votacao.support.MessagesConstants.DATA_INICIO_MENOR_QUE_ATUAL;
+import static br.com.cesarcastro.votacao.support.MessagesConstants.PAUTA_JA_ABERTA;
+import static br.com.cesarcastro.votacao.support.MessagesConstants.PAUTA_JA_ENCERRADA;
+import static br.com.cesarcastro.votacao.support.MessagesConstants.PAUTA_NAO_ABERTA_PARA_VOTACAO;
+import static br.com.cesarcastro.votacao.support.MessagesConstants.PAUTA_NAO_ENCONTRADA;
+import static br.com.cesarcastro.votacao.support.MessagesConstants.USUARIO_JA_VOTOU_NA_PAUTA;
+import static br.com.cesarcastro.votacao.support.MessagesConstants.USUARIO_NAO_HABILITADO_PARA_VOTO;
 import static java.lang.Boolean.TRUE;
 
 @Service
@@ -45,17 +53,17 @@ public class PautaService {
 
     private void validatePautaRequest(PautaRequest pauta) {
         if (pauta.getDataHoraInicio().isBefore(LocalDateTime.now())) {
-            throw new BusinessException("Data de início da pauta não pode ser menor que a data atual");
+            throw new BusinessException(DATA_INICIO_MENOR_QUE_ATUAL);
         }
         if (pauta.getDataHoraFim().isBefore(pauta.getDataHoraInicio())) {
-            throw new BusinessException("Data de fim da pauta não pode ser menor que a data de início");
+            throw new BusinessException(DATA_INICIO_MAIOR_QUE_FIM);
         }
     }
 
     public PautaResponse consultarPautaPorId(Long id) {
         return pautaRepository.findById(id)
                 .map(mapper::toPautaResponse)
-                .orElseThrow(() -> new RecursoNaoEncontradoException("Pauta não encontrada"));
+                .orElseThrow(() -> new RecursoNaoEncontradoException(PAUTA_NAO_ENCONTRADA));
     }
 
     public Page<PautaResponse> listar(PautaFiltro filtro) {
@@ -77,16 +85,16 @@ public class PautaService {
 
     public PautaResponse abrirSessao(Long id, Integer minutos) {
         PautaEntity pauta = pautaRepository.findById(id)
-                .orElseThrow(() -> new RecursoNaoEncontradoException("Pauta não encontrada"));
+                .orElseThrow(() -> new RecursoNaoEncontradoException(PAUTA_NAO_ENCONTRADA));
 
         if ((pauta.getDataHoraInicio().isBefore(LocalDateTime.now())
                 && pauta.getDataHoraFim().isAfter(LocalDateTime.now()))
-                || pauta.getPautaAberta()) {
-            throw new BusinessException("Pauta já aberta");
+                || Boolean.TRUE.equals(pauta.getPautaAberta())) {
+            throw new BusinessException(PAUTA_JA_ABERTA);
         }
 
         if (pauta.getDataHoraFim().isBefore(LocalDateTime.now())) {
-            throw new BusinessException("Pauta já encerrada");
+            throw new BusinessException(PAUTA_JA_ENCERRADA);
         }
 
 
@@ -100,14 +108,14 @@ public class PautaService {
 
     public PautaResponse encerrarSessao(Long id) {
         PautaEntity pauta = pautaRepository.findById(id)
-                .orElseThrow(() -> new RecursoNaoEncontradoException("Pauta não encontrada"));
+                .orElseThrow(() -> new RecursoNaoEncontradoException(PAUTA_NAO_ENCONTRADA));
 
         if (pauta.getDataHoraFim().isBefore(LocalDateTime.now())) {
-            throw new BusinessException("Pauta já encerrada");
+            throw new BusinessException(PAUTA_JA_ENCERRADA);
         }
 
-        if (!pauta.getPautaAberta()) {
-            throw new BusinessException("Pauta já encerrada");
+        if (!Boolean.TRUE.equals(pauta.getPautaAberta())) {
+            throw new BusinessException(PAUTA_JA_ABERTA);
         }
 
         pauta.setDataHoraFim(LocalDateTime.now());
@@ -122,7 +130,7 @@ public class PautaService {
         Usuario usuario = usuarioClient.buscarUsuarioPorCpf(request.getCpf());
 
         PautaEntity pauta = pautaRepository.findById(request.getId())
-                .orElseThrow(() -> new RecursoNaoEncontradoException("Pauta não encontrada"));
+                .orElseThrow(() -> new RecursoNaoEncontradoException(PAUTA_NAO_ENCONTRADA));
 
         validarPautaParaVotacao(pauta);
 
@@ -136,7 +144,7 @@ public class PautaService {
 
         pauta.getVotos().add(voto);
 
-        if (voto.getVoto()) {
+        if (Boolean.TRUE.equals(voto.getVoto())) {
             Long votosAtuais = pauta.getTotalVotosSim();
             pauta.setTotalVotosSim(Objects.isNull(votosAtuais) ? 0 : votosAtuais + 1);
         } else {
@@ -150,14 +158,14 @@ public class PautaService {
     }
 
     private void validarVoto(Long id, Usuario usuario) {
-        if(!usuario.getHabilitado().isHabilitado())
-            throw new BusinessException("Usuário não habilitado para votar");
-        if(votoRepository.existsByCpfAndPautaId(usuario.getCpf(), id))
-            throw new BusinessException("Usuário já votou nesta pauta");
+        if (!usuario.getHabilitado().isHabilitado())
+            throw new BusinessException(USUARIO_NAO_HABILITADO_PARA_VOTO);
+        if (Boolean.TRUE.equals(votoRepository.existsByCpfAndPautaId(usuario.getCpf(), id)))
+            throw new BusinessException(USUARIO_JA_VOTOU_NA_PAUTA);
     }
 
     private void validarPautaParaVotacao(PautaEntity pauta) {
-        if (!pauta.getPautaAberta())
-            throw new BusinessException("Pauta não está aberta para votação");
+        if (!Boolean.TRUE.equals(pauta.getPautaAberta()))
+            throw new BusinessException(PAUTA_NAO_ABERTA_PARA_VOTACAO);
     }
 }

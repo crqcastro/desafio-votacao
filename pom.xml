@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
@@ -10,7 +10,7 @@
     </parent>
     <groupId>br.com.cesarcastro</groupId>
     <artifactId>votacao</artifactId>
-    <version>1.0.7</version>
+    <version>1.0.8</version>
     <name>votacao</name>
     <description>Desafio de votação do SICRED</description>
     <developers>
@@ -32,7 +32,6 @@
         <reactor-test.version>3.5.9</reactor-test.version>
         <mapstruct.version>1.6.0.Beta1</mapstruct.version>
         <easy-random-core.version>4.0.0</easy-random-core.version>
-        <spring-cloud-starter-openfeign.version>3.1.5</spring-cloud-starter-openfeign.version>
         <coverage.line>0</coverage.line>
         <coverage.branch>0</coverage.branch>
         <jacoco.reportPath>${project.basedir}/../target/jacoco.exec</jacoco.reportPath>
@@ -74,6 +73,8 @@
         <sonar-maven-plugin.version>3.9.1.2184</sonar-maven-plugin.version>
         <sonar.scm.exclusions.disabled>false</sonar.scm.exclusions.disabled>
         <jacoco-maven-plugin.version>0.8.8</jacoco-maven-plugin.version>
+        <springdoc-openapi-starter-common.version>2.2.0</springdoc-openapi-starter-common.version>
+        <springdoc-openapi-starter-webmvc-ui.version>2.2.0</springdoc-openapi-starter-webmvc-ui.version>
     </properties>
     <dependencies>
         <dependency>
@@ -84,12 +85,24 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
+            <exclusions>
+                <exclusion>
+                    <artifactId>jackson-databind</artifactId>
+                    <groupId>com.fasterxml.jackson.core</groupId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <!-- SPRING - END -->
         <!-- ACTUATOR - START -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-actuator</artifactId>
+            <exclusions>
+                <exclusion>
+                    <artifactId>jackson-databind</artifactId>
+                    <groupId>com.fasterxml.jackson.core</groupId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <!-- ACTUATOR - END -->
         <!-- LOGGING - START -->
@@ -112,8 +125,13 @@
         <!-- OPENAPI - START -->
         <dependency>
             <groupId>org.springdoc</groupId>
-            <artifactId>springdoc-openapi-ui</artifactId>
-            <version>${springdoc-openapi-ui.version}</version>
+            <artifactId>springdoc-openapi-starter-common</artifactId>
+            <version>${springdoc-openapi-starter-common.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springdoc</groupId>
+            <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+            <version>${springdoc-openapi-starter-webmvc-ui.version}</version>
         </dependency>
         <!-- OPENAPI - END -->
         <!-- OAKCLIENT - START -->
@@ -138,17 +156,23 @@
         </dependency>
         <!-- MAPPER - END -->
         <!-- SERIALIZATION - START -->
-        <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-databind</artifactId>
-            <version>2.18.1</version>
-        </dependency>
+        <!--        <dependency>-->
+        <!--            <groupId>com.fasterxml.jackson.core</groupId>-->
+        <!--            <artifactId>jackson-databind</artifactId>-->
+        <!--            <version>2.18.1</version>-->
+        <!--        </dependency>-->
         <!-- SERIALIZATION - END -->
         <!-- TEST - START -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <artifactId>objenesis</artifactId>
+                    <groupId>org.objenesis</groupId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>io.github.cdimascio</groupId>
@@ -165,6 +189,12 @@
             <groupId>org.jeasy</groupId>
             <artifactId>easy-random-core</artifactId>
             <version>${easy-random-core.version}</version>
+            <exclusions>
+                <exclusion>
+                    <artifactId>jackson-databind</artifactId>
+                    <groupId>com.fasterxml.jackson.core</groupId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <!-- TEST - END -->
     </dependencies>
