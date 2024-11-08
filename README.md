@@ -124,3 +124,6 @@ java -jar ./target/votacao.jar --spring.profiles.active=local
 ## Documentação
 - Postman: Importa a collection disponível dentro da pasta docs. [Collection](https://raw.githubusercontent.com/crqcastro/desafio-votacao/refs/heads/main/docs/Desafio-votacao.postman_collection.json)
 - OpenAPI: Acesse a documentação da API em [OpenAPI](http://localhost:8083/swagger-ui/index.html)
+
+## Versionamento
+O Versionamento da API segue o Versionamento Semântico. [SemVer](https://semver.org/)

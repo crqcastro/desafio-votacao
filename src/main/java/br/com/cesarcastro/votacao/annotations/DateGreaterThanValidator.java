@@ -2,10 +2,12 @@ package br.com.cesarcastro.votacao.annotations;
 
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
+import lombok.extern.slf4j.Slf4j;
 
 import java.lang.reflect.Field;
 import java.time.LocalDateTime;
 
+@Slf4j
 public class DateGreaterThanValidator implements ConstraintValidator<DateGreaterThan, Object> {
 
     private String startDateField;
@@ -34,7 +36,7 @@ public class DateGreaterThanValidator implements ConstraintValidator<DateGreater
 
             return endDate.isAfter(startDate);
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("Erro ao validar a data: {}", e.getMessage());
             return false;
         }
     }
