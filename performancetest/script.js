@@ -15,7 +15,7 @@ export const options = {
 
 export default function () {
     // IMPOERTANTE: A Pauta consultada deve estar cadastrada previamente na base!
-    let res = http.get('http://localhost:8083/v1/pauta/1/contabilizar');
+    let res = http.get('http://localhost:8083/v1/pauta?paginaAtual=0&itensPorPagina=30&orderBy=id&direction=desc');
     check(res, {
         'status é 200': (r) => r.status === 200,
         'tempo de resposta é menor que 500ms': (r) => r.timings.duration < 500,
